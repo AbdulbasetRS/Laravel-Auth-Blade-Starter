@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -14,7 +16,42 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        return response()->json(200);
+        $login = $request->login;
+        $password = $request->password;
+
+        $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email'
+            : (is_numeric($login) ? 'mobile_number' : 'username');
+
+        $user = User::where($fieldType, $login)->first();
+
+        if (!$user) {
+            return back()->withErrors(['login' => 'Invalid login credentials']);
+        }
+
+        if (!$user->can_login) {
+            return back()->withErrors(['login' => 'You are not allowed to login']);
+        }
+
+        if (!in_array($user->status, ['active'])) {
+            return back()->withErrors(['login' => 'Your account is not active']);
+        }
+
+        $allowedTypes = ['user', 'admin', 'it', 'tester', 'employee'];
+        if (!in_array($user->type, $allowedTypes)) {
+            return back()->withErrors(['login' => 'You are not allowed to login']);
+        }
+
+        if (Auth::attempt([$fieldType => $login, 'password' => $password], $request->remember_me)) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return back()->withErrors(['login' => 'Invalid login credentials']);
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect()->route('admin.login');
     }
 
     /* ========================================================================== */
