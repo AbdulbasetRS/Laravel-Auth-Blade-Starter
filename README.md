@@ -5,7 +5,7 @@ This project is designed to be a quick starting point for new Laravel applicatio
 
 ---
 
-## 🚀 Features
+## Features
 - Laravel **12.x**
 - Native Authentication (**no Breeze or Jetstream**)
 - Blade Templates with **Bootstrap 5**
@@ -16,7 +16,7 @@ This project is designed to be a quick starting point for new Laravel applicatio
 
 ---
 
-## 📦 Installation
+##  Installation
 
 ### Steps
 1. Clone the repository  
@@ -38,13 +38,46 @@ php artisan migrate
 php artisan serve
 ```
 
+---
+
 ## Routes
-| Method | URI        | Name      | Description        |
-| ------ | ---------- | --------- | ------------------ |
-| GET    | /login     | login     | Show login form    |
-| POST   | /login     | login     | Handle login       |
-| POST   | /logout    | logout    | Handle logout      |
-| GET    | /register  | register  | Show register form |
-| POST   | /register  | register  | Handle register    |
-| GET    | /dashboard | dashboard | User dashboard     |
-| GET    | /          | home      | Home page (public) |
+
+### Frontend Routes
+| Method | URI                              | Name                          | Description                          |
+|--------|----------------------------------|-------------------------------|--------------------------------------|
+| GET    | /                                | frontend.home                 | Homepage                             |
+| GET    | /login                           | frontend.login                | Show login form                      |
+| POST   | /login                           | frontend.login.submit         | Handle login form                    |
+| GET    | /register                        | frontend.register             | Show registration form               |
+| POST   | /register                        | frontend.register.submit      | Handle registration                  |
+| GET    | /profile                         | frontend.profile              | User profile page                    |
+| POST   | /logout                          | frontend.logout               | Logout user                          |
+| GET    | /forgot-password                 | frontend.password.request     | Show forgot password form            |
+| POST   | /forgot-password                 | frontend.password.email       | Send reset link via email            |
+| GET    | /reset-password/{token}          | frontend.password.reset       | Show reset password form             |
+| POST   | /reset-password                  | frontend.password.update      | Handle reset password submission     |
+| GET    | /email/verify                    | frontend.verification.notice  | Show email verification notice       |
+| GET    | /email/verify/{id}/{hash}        | frontend.verification.verify  | Verify user email                    |
+| POST   | /email/verification-notification | frontend.verification.send    | Resend verification link             |
+
+### Admin Routes
+| Method | URI                                  | Name                          | Description                          |
+|--------|--------------------------------------|-------------------------------|--------------------------------------|
+| GET    | /admin/login                         | admin.login                   | Show admin login form                |
+| POST   | /admin/login                         | admin.login.submit            | Handle admin login form              |
+| GET    | /admin/dashboard                     | admin.dashboard               | Admin dashboard                      |
+| POST   | /admin/logout                        | admin.logout                  | Logout admin                         |
+| GET    | /admin/forgot-password               | admin.password.request        | Show admin forgot password form      |
+| POST   | /admin/forgot-password               | admin.password.email          | Send admin reset link via email      |
+| GET    | /admin/reset-password/{token}        | admin.password.reset          | Show admin reset password form       |
+| POST   | /admin/reset-password                | admin.password.update         | Handle admin reset password          |
+| GET    | /admin/email/verify                  | admin.verification.notice     | Show admin email verification notice |
+| GET    | /admin/email/verify/{id}/{hash}      | admin.verification.verify     | Verify admin email                   |
+| POST   | /admin/email/verification-notification | admin.verification.send     | Resend admin verification link       |
+| GET    | /admin/users                         | admin.users.index             | List all users                       |
+| GET    | /admin/users/{id}                    | admin.users.show              | Show single user details             |
+| GET    | /admin/users/create                  | admin.users.create            | Show create user form                |
+| POST   | /admin/users                         | admin.users.store             | Save new user                        |
+| GET    | /admin/users/{id}/edit               | admin.users.edit              | Show edit user form                  |
+| PUT    | /admin/users/{id}                    | admin.users.update            | Update user                          |
+| DELETE | /admin/users/{id}                    | admin.users.destroy           | Delete user                          |
