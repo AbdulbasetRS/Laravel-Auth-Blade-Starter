@@ -37,3 +37,14 @@ php artisan key:generate
 php artisan migrate
 php artisan serve
 ```
+
+## Routes
+| Method | URI        | Name      | Description        |
+| ------ | ---------- | --------- | ------------------ |
+| GET    | /login     | login     | Show login form    |
+| POST   | /login     | login     | Handle login       |
+| POST   | /logout    | logout    | Handle logout      |
+| GET    | /register  | register  | Show register form |
+| POST   | /register  | register  | Handle register    |
+| GET    | /dashboard | dashboard | User dashboard     |
+| GET    | /          | home      | Home page (public) |
