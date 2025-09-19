@@ -7,23 +7,70 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    public function login()
+    public function showLoginForm()
     {
-        return view('frontend.auth.login');
+        return view('admin.auth.login');
     }
 
-    public function register()
+    public function login(Request $request)
     {
-        return view('frontend.auth.register');
+        return response()->json(200);
     }
 
-    public function forgotPassword()
+    /* ========================================================================== */
+
+    // Register
+    public function showRegisterForm()
     {
-        return view('frontend.auth.forgot-password');
+        return view('admin.auth.register');
     }
 
-    public function resetPassword()
+    public function register(Request $request)
     {
-        return view('frontend.auth.reset-password');
+        return response()->json(200);
+    }
+
+    /* ========================================================================== */
+
+    // Password Reset
+    public function showForgotPasswordForm()
+    {
+        return view('admin.auth.forgot-password');
+    }
+
+    public function sendResetLink(Request $request)
+    {
+        return response()->json(200);
+    }
+
+    /* ========================================================================== */
+
+    // Reset Password
+    public function showResetPasswordForm()
+    {
+        return view('admin.auth.reset-password');
+    }
+
+    public function resetPassword(Request $request)
+    {
+        return response()->json(200);
+    }
+
+    /* ========================================================================== */
+
+    // Email Verification
+    public function verificationNotice()
+    {
+        return view('admin.auth.verification-notice');
+    }
+
+    public function verificationVerify()
+    {
+        return view('admin.auth.verification-verify');
+    }
+
+    public function sendVerificationNotification(Request $request)
+    {
+        return response()->json(200);
     }
 }

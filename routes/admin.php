@@ -12,24 +12,23 @@ Route::controller(AdminAuthController::class)
         // Authentication
         Route::get('/login', 'showLoginForm')->name('login'); // admin.login
         Route::post('/login', 'login')->name('login.submit'); // admin.login.submit
+        Route::get('/register', 'showRegisterForm')->name('register'); // admin.register
+        Route::post('/register', 'register')->name('register.submit'); // admin.register.submit
         Route::post('/logout', 'logout')->name('logout'); // admin.logout
         Route::get('/dashboard', 'dashboard')->name('dashboard'); // admin.dashboard
-
+        
         // Password Reset
-        Route::get('/forgot-password', 'showForgotPasswordForm')->name('password.request'); // admin.password.request
-        Route::post('/forgot-password', 'sendResetLink')->name('password.email'); // admin.password.email
-        Route::get('/reset-password/{token}', 'showResetPasswordForm')->name('password.reset'); // admin.password.reset
-        Route::post('/reset-password', 'resetPassword')->name('password.update'); // admin.password.update
+        Route::get('/forgot-password', 'showForgotPasswordForm')->name('forgot-password'); // admin.forgot-password
+        Route::post('/forgot-password', 'sendResetLink')->name('forgot-password.submit'); // admin.forgot-password.submit
+        Route::get('/reset-password/{token}', 'showResetPasswordForm')->name('reset-password'); // admin.reset-password
+        Route::post('/reset-password', 'resetPassword')->name('reset-password.submit'); // admin.reset-password.submit
+
+        // Email Verification
+        Route::get('/verify', 'verificationNotice')->name('verification-notice'); // admin.verification-notice
+        Route::get('/verify/{id}/{hash}', 'verificationVerify')->name('verification-verify'); // admin.verification-verify
+        Route::post('/verification-notification', 'sendVerificationNotification')->name('verification-notification.submit'); // admin.verification-notification.submit
     });
 
-Route::controller(AdminVerificationController::class)
-    ->prefix('admin/email')
-    ->as('admin.verification.')
-    ->group(function () {
-        Route::get('/verify', 'notice')->name('notice'); // admin.verification.notice
-        Route::get('/verify/{id}/{hash}', 'verify')->name('verify'); // admin.verification.verify
-        Route::post('/verification-notification', 'send')->name('send'); // admin.verification.send
-    });
 
 // Admin Users Management
 Route::controller(UserController::class)
