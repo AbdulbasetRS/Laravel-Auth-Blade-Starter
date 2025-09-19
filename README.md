@@ -13,6 +13,7 @@ This project is designed to be a quick starting point for new Laravel applicatio
 - MySQL database with a pre-configured **users** table
 - Validation rules and error messages included
 - Clean and extendable structure for quick development
+- Built-in localization using **mcamara/laravel-localization** (i18n-ready)
 
 ---
 
@@ -41,26 +42,6 @@ php artisan serve
 ---
 
 ## Routes
-
-### Frontend Routes
-| Method | URI                              | Name                          | Description                          |
-|--------|----------------------------------|-------------------------------|--------------------------------------|
-| GET    | /                                | frontend.home                 | Homepage                             |
-| GET    | /login                           | frontend.login                | Show login form                      |
-| POST   | /login                           | frontend.login.submit         | Handle login form                    |
-| GET    | /register                        | frontend.register             | Show registration form               |
-| POST   | /register                        | frontend.register.submit      | Handle registration                  |
-| GET    | /profile                         | frontend.profile              | User profile page                    |
-| POST   | /logout                          | frontend.logout               | Logout user                          |
-| GET    | /forgot-password                 | frontend.password.request     | Show forgot password form            |
-| POST   | /forgot-password                 | frontend.password.email       | Send reset link via email            |
-| GET    | /reset-password/{token}          | frontend.password.reset       | Show reset password form             |
-| POST   | /reset-password                  | frontend.password.update      | Handle reset password submission     |
-| GET    | /email/verify                    | frontend.verification.notice  | Show email verification notice       |
-| GET    | /email/verify/{id}/{hash}        | frontend.verification.verify  | Verify user email                    |
-| POST   | /email/verification-notification | frontend.verification.send    | Resend verification link             |
-
-### Admin Routes
 | Method | URI                                  | Name                          | Description                          |
 |--------|--------------------------------------|-------------------------------|--------------------------------------|
 | GET    | /admin/login                         | admin.login                   | Show admin login form                |
@@ -81,3 +62,5 @@ php artisan serve
 | GET    | /admin/users/{id}/edit               | admin.users.edit              | Show edit user form                  |
 | PUT    | /admin/users/{id}                    | admin.users.update            | Update user                          |
 | DELETE | /admin/users/{id}                    | admin.users.destroy           | Delete user                          |
+
+---
