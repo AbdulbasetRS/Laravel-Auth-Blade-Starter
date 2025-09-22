@@ -39,9 +39,9 @@ class UserSeeder extends Seeder
             'note' => 'صاحب المشروع',
             'avatar' => 'https://ui-avatars.com/api/?name=Abdulbaset+Sayed&size=512&background=random',
         ]);
-        $admin->oauths()->create([
+        $admin->authProviders()->create([
             'provider_name' => 'google',
-            'provider_id' => '1234567890',
+            'provider_user_id' => '1234567890',
             'email' => 'abdulbaset_rs@digitalatum.com',
             'name' => 'Abdulbaset R. Sayed',
             'avatar' => 'https://ui-avatars.com/api/?name=Abdulbaset+Sayed&size=512&background=random',

@@ -17,7 +17,6 @@ class ProfileFactory extends Factory
             'first_name' => $this->faker->firstName,
             'middle_name' => $this->faker->optional()->firstName,
             'last_name' => $this->faker->lastName,
-            'kinship' => $this->faker->optional()->randomElement(['father', 'mother', 'other']),
             'whatapp_number' => '01' . $this->faker->numberBetween(100000000, 999999999),
             'telegram_number' => '01' . $this->faker->numberBetween(100000000, 999999999),
             'date_of_birth' => $this->faker->optional()->date('Y-m-d', '2005-01-01'),
