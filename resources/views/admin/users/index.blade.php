@@ -12,9 +12,6 @@
 
 @section('content')
     <div class="container">
-        <form action="{{ route('admin.logout') }}" method="POST">
-            @csrf
-            <button type="submit">Logout</button>
-        </form>
+    
     </div>
 @endsection

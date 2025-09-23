@@ -7,7 +7,7 @@
 @endsection
 
 @section('footer')
-    {{-- <x-admin.footer /> --}}
+    <x-admin.footer />
 @endsection
 
 @section('content')
@@ -41,14 +41,9 @@
                             @csrf
 
                             <div class="form-floating mb-3">
-                                <input
-                                    type="text"
-                                    class="form-control @error('identifier') is-invalid @enderror"
-                                    id="identifier"
-                                    name="identifier"
-                                    placeholder="name@example.com"
-                                    value="{{ old('identifier') }}"
-                                    required>
+                                <input type="text" class="form-control @error('identifier') is-invalid @enderror"
+                                    id="identifier" name="identifier" placeholder="name@example.com"
+                                    value="{{ old('identifier') }}" required>
                                 <label for="identifier">البريد الإلكتروني أو اسم المستخدم</label>
                                 @error('identifier')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -56,13 +51,8 @@
                             </div>
 
                             <div class="form-floating mb-3">
-                                <input
-                                    type="password"
-                                    class="form-control @error('password') is-invalid @enderror"
-                                    id="password"
-                                    name="password"
-                                    placeholder="••••••••"
-                                    required>
+                                <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                    id="password" name="password" placeholder="••••••••" required>
                                 <label for="password">كلمة المرور</label>
                                 @error('password')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -71,13 +61,15 @@
 
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="1" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}>
+                                    <input class="form-check-input" type="checkbox" value="1" id="remember"
+                                        name="remember" {{ old('remember') ? 'checked' : '' }}>
                                     <label class="form-check-label" for="remember">
                                         تذكرني
                                     </label>
                                 </div>
                                 @if (Route::has('admin.forgot-password'))
-                                    <a class="small text-decoration-none" href="{{ route('admin.forgot-password') }}">نسيت كلمة المرور؟</a>
+                                    <a class="small text-decoration-none" href="{{ route('admin.forgot-password') }}">نسيت
+                                        كلمة المرور؟</a>
                                 @endif
                             </div>
 

@@ -1,4 +1,87 @@
 body {
+    background-color: var(--app-bg) !important;
+    color: var(--app-fg) !important;
+}
+
+/* Theme variables (light as default) */
+:root {
+    --app-bg: #ffffff;
+    --app-fg: #2d3436;
+}
+
+/* Light mode navbar/footer backgrounds */
+.navbar.bg-light {
     background-color: #dfe6e9 !important;
-    color: #2d3436 !important;
+    color: var(--app-fg) !important;
+}
+footer,
+footer.bg-light {
+    background-color: #dfe6e9 !important;
+    color: var(--app-fg) !important;
+}
+.navbar.border-bottom {
+    border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+}
+footer.border-top {
+    border-top-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Dark theme overrides */
+body.theme-dark {
+    --app-bg: #2d3436;
+    --app-fg: #dfe6e9;
+}
+
+/* Adjust some common elements in dark theme */
+body.theme-dark .navbar.bg-light {
+    background-color: #1f2426 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.theme-dark .border-top {
+    border-top-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Logo visibility rules */
+.logo-light { display: inline-block; }
+.logo-dark { display: none; }
+body.theme-dark .logo-light { display: none !important; }
+body.theme-dark .logo-dark { display: inline-block !important; }
+
+/* Theme toggle icon helpers (in case JS runs late) */
+body.theme-dark .theme-icon-dark { display: inline-block !important; }
+body.theme-dark .theme-icon-light { display: none !important; }
+body:not(.theme-dark) .theme-icon-dark { display: none !important; }
+body:not(.theme-dark) .theme-icon-light { display: inline-block !important; }
+
+/* Footer dark theme adjustments */
+body.theme-dark footer {
+    background-color: #1f2426 !important; /* slightly darker than page bg for separation */
+    color: var(--app-fg) !important;
+}
+body.theme-dark footer.bg-light { /* in case bg-light is present */
+    background-color: #1f2426 !important;
+}
+body.theme-dark footer .text-muted {
+    color: rgba(223, 230, 233, 0.75) !important;
+}
+body.theme-dark footer a {
+    color: #cfd8dc;
+}
+body.theme-dark footer a:hover {
+    color: #ffffff;
+}
+/* Footer dropdown in dark theme */
+body.theme-dark footer .dropdown-menu {
+    background-color: #2b3032;
+    color: var(--app-fg);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+body.theme-dark footer .dropdown-item {
+    color: var(--app-fg);
+}
+body.theme-dark footer .dropdown-item:hover, 
+body.theme-dark footer .dropdown-item:focus {
+    background-color: #3a3f41;
+    color: #ffffff;
 }

@@ -23,12 +23,17 @@
 </head>
 
 <body class="font-default" dir="ltr">
+    <div class="d-flex flex-column min-vh-100">
 
-    @yield('navbar')
+        @yield('navbar')
 
-    @yield('content')
+        <main class="flex-grow-1">
+            @yield('content')
+        </main>
 
-    @yield('footer')
+        @yield('footer')
+
+    </div>
 
     <!-- Site Scripts -->
     @yield('main.script')
