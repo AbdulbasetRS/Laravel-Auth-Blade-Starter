@@ -1,19 +1,17 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+@extends('admin.structure')
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@section('title', 'Login')
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+@section('navbar')
+    {{-- <x-admin.navbar /> --}}
+@endsection
 
-    <!-- Fonts -->
-    <!-- <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" /> -->
-</head>
+@section('footer')
+    {{-- <x-admin.footer /> --}}
+@endsection
 
-<body>
-    <div>
-        
+@section('content')
+    <div class="container">
         <form action="{{ route('admin.login') }}" method="POST">
             @csrf
 
@@ -49,6 +47,4 @@
             <button type="submit">Login</button>
         </form>
     </div>
-</body>
-
-</html>
+@endsection

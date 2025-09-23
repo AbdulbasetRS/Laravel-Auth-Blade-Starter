@@ -1,4 +1,20 @@
-<form action="{{ route('admin.logout') }}" method="POST">
-    @csrf
-    <button type="submit">Logout</button>
-</form>
+@extends('admin.structure')
+
+@section('title', 'Edit User')
+
+@section('navbar')
+    <x-admin.navbar />
+@endsection
+
+@section('footer')
+    <x-admin.footer />
+@endsection
+
+@section('content')
+    <div class="container">
+        <form action="{{ route('admin.logout') }}" method="POST">
+            @csrf
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+@endsection
