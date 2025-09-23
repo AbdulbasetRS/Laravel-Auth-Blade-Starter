@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Models\User;
 use App\Enums\UserStatus;
@@ -54,6 +57,14 @@ class AuthController extends Controller
         ];
         if (!in_array($user->type, $allowedTypes, true)) {
             return back()->withErrors(['login' => 'You are not allowed to login']);
+        }
+
+        // Validate credentials without logging in, to check verification state first
+        $credentialsValid = Auth::validate([$fieldType => $login, 'password' => $password]);
+        if ($credentialsValid && is_null($user->email_verified_at)) {
+            // Store for resend usage and redirect to verification notice
+            $request->session()->put('verification_user_id', $user->id);
+            return redirect()->route('admin.verification-notice')->with('error', 'حسابك غير مفعل. رجاءً تحقق من بريدك الإلكتروني لتفعيل الحساب.');
         }
 
         if (Auth::attempt([$fieldType => $login, 'password' => $password], $request->remember_me)) {
@@ -198,19 +209,119 @@ class AuthController extends Controller
     /* ========================================================================== */
 
     // Email Verification
-    public function verificationNotice()
+    public function verificationNotice(Request $request)
     {
-        return view('admin.auth.verification-notice');
+        // Try to get the user needing verification from session or current auth
+        $user = null;
+        if ($request->session()->has('verification_user_id')) {
+            $user = User::find($request->session()->get('verification_user_id'));
+        }
+        if (!$user && Auth::check()) {
+            $user = Auth::user();
+        }
+
+        // Auto-send verification email with cooldown when landing on this page
+        if ($user && is_null($user->email_verified_at)) {
+            $key = 'verify_resend_user_' . $user->id;
+            if (!Cache::has($key)) {
+                Cache::put($key, true, now()->addSeconds(60));
+
+                $url = URL::temporarySignedRoute(
+                    'admin.verification-verify',
+                    now()->addMinutes(60),
+                    ['id' => $user->id, 'hash' => sha1($user->email)]
+                );
+
+                try {
+                    Mail::send('emails.admin.verify-email', ['verifyUrl' => $url, 'user' => $user], function ($message) use ($user) {
+                        $message->to($user->email)
+                            ->subject(__('Email Verification'));
+                    });
+                    session()->flash('status', 'تم إرسال رسالة التحقق إلى بريدك الإلكتروني');
+                } catch (\Throwable $e) {
+                    Log::error('Failed to send verification email', ['user_id' => $user->id, 'error' => $e->getMessage()]);
+                    session()->flash('error', 'تعذر إرسال رسالة التحقق حاليًا. الرجاء المحاولة لاحقًا.');
+                }
+            } else {
+                session()->flash('status', 'تم إرسال رسالة التحقق مؤخرًا. يمكنك طلب إعادة الإرسال بعد دقيقة.');
+            }
+        }
+
+        return view('admin.auth.verification-notice', compact('user'));
     }
 
-    public function verificationVerify()
+    public function verificationVerify(Request $request, $id, $hash)
     {
-        return view('admin.auth.verification-verify');
+        // Validate signature and expiry
+        if (!URL::hasValidSignature($request)) {
+            return redirect()->route('admin.verification-notice')->with('error', 'رابط التحقق غير صالح أو منتهي');
+        }
+
+        $user = User::find($id);
+        if (!$user) {
+            return redirect()->route('admin.verification-notice')->with('error', 'المستخدم غير موجود');
+        }
+
+        // Confirm hash matches email
+        if (!hash_equals((string) $hash, sha1($user->email))) {
+            return redirect()->route('admin.verification-notice')->with('error', 'رابط التحقق غير صالح');
+        }
+
+        if (is_null($user->email_verified_at)) {
+            $user->email_verified_at = now();
+            $user->save();
+        }
+
+        // Optionally clear the session flag
+        $request->session()->forget('verification_user_id');
+
+        return view('admin.auth.verification-verify', ['user' => $user]);
     }
 
     public function sendVerificationNotification(Request $request)
     {
-        return response()->json(200);
+        // Determine target user
+        $user = null;
+        if ($request->session()->has('verification_user_id')) {
+            $user = User::find($request->session()->get('verification_user_id'));
+        }
+        if (!$user && Auth::check()) {
+            $user = Auth::user();
+        }
+        if (!$user) {
+            return back()->with('error', 'لا يوجد مستخدم لإعادة إرسال التحقق له');
+        }
+
+        if (!is_null($user->email_verified_at)) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        // Throttle: allow once per 60 seconds per user
+        $key = 'verify_resend_user_' . $user->id;
+        if (Cache::has($key)) {
+            return back()->with('status', 'تم إرسال رسالة التحقق مؤخرًا. يمكنك طلب إعادة الإرسال بعد دقيقة.');
+        }
+
+        Cache::put($key, true, now()->addSeconds(60));
+
+        // Build signed URL valid for 60 minutes
+        $url = URL::temporarySignedRoute(
+            'admin.verification-verify',
+            now()->addMinutes(60),
+            ['id' => $user->id, 'hash' => sha1($user->email)]
+        );
+
+        // Send email
+        try {
+            Mail::send('emails.admin.verify-email', ['verifyUrl' => $url, 'user' => $user], function ($message) use ($user) {
+                $message->to($user->email)
+                    ->subject(__('Email Verification'));
+            });
+            return back()->with('status', 'تم إرسال رسالة التحقق إلى بريدك الإلكتروني');
+        } catch (\Throwable $e) {
+            Log::error('Failed to send verification email (manual resend)', ['user_id' => $user->id, 'error' => $e->getMessage()]);
+            return back()->with('error', 'تعذر إرسال رسالة التحقق حاليًا. الرجاء المحاولة لاحقًا.');
+        }
     }
 
     /* ========================================================================== */

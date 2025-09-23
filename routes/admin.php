@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\VerificationController as AdminVerificationController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Middleware\Authenticate as AppAuthenticate;
+use App\Http\Middleware\EnsureEmailIsVerified;
 
 Route::controller(AdminAuthController::class)
     ->prefix('admin')
@@ -15,8 +16,8 @@ Route::controller(AdminAuthController::class)
         Route::post('/login', 'login')->name('login.submit'); // admin.login.submit
         Route::get('/register', 'showRegisterForm')->name('register'); // admin.register
         Route::post('/register', 'register')->name('register.submit'); // admin.register.submit
-        Route::post('/logout', 'logout')->name('logout')->middleware(AppAuthenticate::class); // admin.logout
-        Route::get('/dashboard', 'dashboard')->name('dashboard')->middleware(AppAuthenticate::class); // admin.dashboard
+        Route::post('/logout', 'logout')->name('logout')->middleware([AppAuthenticate::class]); // admin.logout
+        Route::get('/dashboard', 'dashboard')->name('dashboard')->middleware([AppAuthenticate::class, EnsureEmailIsVerified::class]); // admin.dashboard
         
         // Password Reset
         Route::get('/forgot-password', 'showForgotPasswordForm')->name('forgot-password'); // admin.forgot-password
@@ -35,7 +36,7 @@ Route::controller(AdminAuthController::class)
 Route::controller(UserController::class)
     ->prefix('admin/users')
     ->as('admin.users.')
-    ->middleware(AppAuthenticate::class)
+    ->middleware([AppAuthenticate::class, EnsureEmailIsVerified::class])
     ->group(function () {
         Route::get('/', 'index')->name('index'); // admin.users.index
         Route::get('/create', 'create')->name('create'); // admin.users.create
