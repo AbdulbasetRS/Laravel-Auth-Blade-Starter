@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use App\Models\User;
 use App\Enums\UserStatus;
 use App\Enums\UserType;
@@ -92,20 +96,103 @@ class AuthController extends Controller
 
     public function sendResetLink(Request $request)
     {
-        return response()->json(200);
+        // 1) Validate email input
+        $data = $request->validate([
+            'email' => ['required', 'email', 'exists:users,email'],
+        ], [
+            'email.required' => 'البريد الإلكتروني مطلوب',
+            'email.email' => 'صيغة البريد الإلكتروني غير صحيحة',
+            'email.exists' => 'لا يوجد مستخدم بهذا البريد',
+        ]);
+
+        $email = $data['email'];
+
+        // 2) Generate a secure random token and store hashed token
+        $plainToken = Str::random(64);
+        $hashedToken = Hash::make($plainToken);
+
+        // Ensure table password_reset_tokens exists. Laravel 10 default: email, token, created_at
+        // Remove previous tokens for this email to avoid clutter
+        DB::table('password_reset_tokens')->where('email', $email)->delete();
+
+        DB::table('password_reset_tokens')->insert([
+            'email' => $email,
+            'token' => $hashedToken,
+            'created_at' => now(),
+        ]);
+
+        // 3) Send email with reset link (include plain token and email)
+        $resetUrl = route('admin.reset-password', ['token' => $plainToken]) . '?email=' . urlencode($email);
+
+        Mail::send('emails.admin.reset-password', ['resetUrl' => $resetUrl, 'email' => $email], function ($message) use ($email) {
+            $message->to($email)
+                ->subject(__('Reset Password Notification'));
+        });
+
+        return back()->with('status', 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني');
     }
 
     /* ========================================================================== */
 
     // Reset Password
-    public function showResetPasswordForm()
+    public function showResetPasswordForm(string $token)
     {
-        return view('admin.auth.reset-password');
+        // The email may arrive via query string
+        $email = request()->query('email');
+        return view('admin.auth.reset-password', compact('token', 'email'));
     }
 
     public function resetPassword(Request $request)
     {
-        return response()->json(200);
+        // 1) Validate input
+        $validated = $request->validate([
+            'token' => ['required', 'string'],
+            'email' => ['required', 'email', 'exists:users,email'],
+            'password' => ['required', 'confirmed', 'min:8'],
+        ], [
+            'email.required' => 'البريد الإلكتروني مطلوب',
+            'email.email' => 'صيغة البريد الإلكتروني غير صحيحة',
+            'email.exists' => 'لا يوجد مستخدم بهذا البريد',
+            'password.required' => 'كلمة المرور مطلوبة',
+            'password.confirmed' => 'تأكيد كلمة المرور غير متطابق',
+            'password.min' => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل',
+        ]);
+
+        $email = $validated['email'];
+        $plainToken = $validated['token'];
+
+        // 2) Fetch token record and verify
+        $record = DB::table('password_reset_tokens')->where('email', $email)->first();
+        if (!$record) {
+            return back()->withErrors(['email' => 'الرمز غير صالح أو منتهي'])->withInput($request->except('password', 'password_confirmation'));
+        }
+
+        // Token expiry (e.g., 60 minutes)
+        $expiresAt = \Carbon\Carbon::parse($record->created_at)->addMinutes(60);
+        if (now()->greaterThan($expiresAt)) {
+            // Cleanup expired token
+            DB::table('password_reset_tokens')->where('email', $email)->delete();
+            return back()->withErrors(['email' => 'انتهت صلاحية رابط إعادة التعيين، الرجاء المحاولة مجددًا'])->withInput($request->except('password', 'password_confirmation'));
+        }
+
+        if (!Hash::check($plainToken, $record->token)) {
+            return back()->withErrors(['email' => 'الرمز غير صالح'])->withInput($request->except('password', 'password_confirmation'));
+        }
+
+        // 3) Update user password
+        $user = User::where('email', $email)->first();
+        if (!$user) {
+            return back()->withErrors(['email' => 'المستخدم غير موجود'])->withInput($request->except('password', 'password_confirmation'));
+        }
+
+        $user->password = Hash::make($validated['password']);
+        $user->save();
+
+        // 4) Delete token
+        DB::table('password_reset_tokens')->where('email', $email)->delete();
+
+        // 5) Redirect to login with status
+        return redirect()->route('admin.login')->with('status', 'تم تحديث كلمة المرور بنجاح، يمكنك تسجيل الدخول الآن');
     }
 
     /* ========================================================================== */
