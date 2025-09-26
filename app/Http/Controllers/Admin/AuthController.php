@@ -94,7 +94,70 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        return response()->json(200);
+        // Validate incoming registration data
+        $validated = $request->validate([
+            'username' => ['required', 'string', 'min:3', 'max:50', 'unique:users,username'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'mobile_number' => ['required', 'string', 'max:50', 'unique:users,mobile_number'],
+            'password' => ['required', 'string', 'confirmed', 'min:8'],
+            'first_name' => ['required', 'string', 'max:100'],
+            'last_name' => ['required', 'string', 'max:100'],
+        ], [
+            'username.required' => 'اسم المستخدم مطلوب',
+            'username.unique' => 'اسم المستخدم مسجل مسبقًا',
+            'email.required' => 'البريد الإلكتروني مطلوب',
+            'email.email' => 'صيغة البريد الإلكتروني غير صحيحة',
+            'email.unique' => 'البريد الإلكتروني مسجل مسبقًا',
+            'mobile_number.required' => 'رقم الجوال مطلوب',
+            'mobile_number.unique' => 'رقم الجوال مسجل مسبقًا',
+            'password.required' => 'كلمة المرور مطلوبة',
+            'password.confirmed' => 'تأكيد كلمة المرور غير متطابق',
+            'password.min' => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل',
+            'first_name.required' => 'الاسم الأول مطلوب',
+            'last_name.required' => 'اسم العائلة مطلوب',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Generate a unique slug based on username
+            $baseSlug = Str::slug($validated['username']);
+            $slug = $baseSlug;
+            $counter = 1;
+            while (User::where('slug', $slug)->exists()) {
+                $slug = $baseSlug . '-' . $counter++;
+            }
+
+            // Create user
+            $user = User::create([
+                'username' => $validated['username'],
+                'slug' => $slug,
+                'email' => $validated['email'],
+                'mobile_number' => $validated['mobile_number'],
+                'password' => Hash::make($validated['password']),
+                'status' => UserStatus::Pending,
+                'type' => UserType::User,
+                'can_login' => true,
+            ]);
+
+            // Create profile
+            $user->profile()->create([
+                'first_name' => $validated['first_name'],
+                'last_name' => $validated['last_name'],
+            ]);
+
+            DB::commit();
+
+            // Store for verification flow and redirect to notice (auto-sends email with throttle)
+            $request->session()->put('verification_user_id', $user->id);
+            return redirect()->route('admin.verification-notice')
+                ->with('status', 'تم إنشاء الحساب بنجاح. قم بالتحقق من بريدك الإلكتروني لتفعيل الحساب.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Registration failed', ['error' => $e->getMessage()]);
+            return back()->with('error', 'تعذر إنشاء الحساب حاليًا. الرجاء المحاولة لاحقًا.')
+                ->withInput($request->except('password', 'password_confirmation'));
+        }
     }
 
     /* ========================================================================== */

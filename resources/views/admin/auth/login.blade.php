@@ -75,6 +75,13 @@
 
                             <button type="submit" class="btn btn-primary w-100">تسجيل الدخول</button>
                         </form>
+                        <div class="text-center mt-3">
+                            @if (Route::has('admin.register'))
+                                <span class="small">لا تملك حسابًا؟
+                                    <a class="text-decoration-none" href="{{ route('admin.register') }}">إنشاء حساب جديد</a>
+                                </span>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
