@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom shadow-sm">
     <div class="container">
-        <!-- Left: Logo / Brand -->
-        <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('admin.dashboard') }}" aria-label="Go to dashboard">
+        <!-- Brand: order depends on locale -->
+        <a class="navbar-brand d-flex align-items-center gap-2 {{ app()->getLocale() === 'ar' ? 'order-1' : 'order-3' }}" href="{{ route('admin.dashboard') }}" aria-label="Go to dashboard">
             {{-- Optional dual logos for theme switching --}}
             {{-- Provide your actual logo files below, or keep the text fallback. --}}
             {{-- Light logo (visible by default) --}}
@@ -12,14 +12,16 @@
             <span class="fw-semibold app-name">{{ config('app.name') }}</span>
         </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar"
+        <!-- Toggler: order depends on locale -->
+        <button class="navbar-toggler {{ app()->getLocale() === 'ar' ? 'order-3' : 'order-1' }}" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar"
             aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="adminNavbar">
+        <!-- Collapse: fixed in the middle; ul alignment controls side -->
+        <div class="collapse navbar-collapse order-2" id="adminNavbar">
             <!-- Right: User Dropdown -->
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+            <ul class="navbar-nav mb-2 mb-lg-0 align-items-lg-center">
                 @auth
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userMenu"

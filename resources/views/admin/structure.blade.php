@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" class="h-100">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" class="h-100">
 
 <head>
     <!-- Meta Data -->
@@ -22,7 +22,7 @@
 
 </head>
 
-<body class="font-default" dir="ltr">
+<body class="font-default" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
     <div class="d-flex flex-column min-vh-100">
 
         @yield('navbar')
