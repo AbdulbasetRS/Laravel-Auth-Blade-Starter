@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>404 | {{ config('app.name') }}</title>
-    <link rel="stylesheet" href="{{ asset('general/libraries/bootstrap/bootstrap-v5.3.8/dist/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-</head>
-<body class="d-flex align-items-center" style="min-height:100vh;">
+@extends('frontend.structure')
+
+@section('title', '404')
+
+@section('content')
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
@@ -27,6 +22,4 @@
             </div>
         </div>
     </div>
-    <script src="{{ asset('general/libraries/bootstrap/bootstrap-v5.3.8/dist/js/bootstrap.bundle.min.js') }}"></script>
-</body>
-</html>
+@endsection
