@@ -9,7 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ env('APP_NAME') }} @if(trim($__env->yieldContent('title'))) | @yield('title') @endif</title>
     @yield('meta')
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('general/images/favicon.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('general/images/cpanel-logo.png') }}">
 
     <!-- Fonts -->
     <link rel="stylesheet" href="{{ asset('general/fonts/fonts.css') }}">

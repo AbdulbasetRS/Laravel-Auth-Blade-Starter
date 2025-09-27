@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom shadow-sm">
     <div class="container">
-        <!-- Brand: order depends on locale -->
+        <!-- Brand: keep before collapse on mobile to avoid jumping -->
         <a class="navbar-brand d-flex align-items-center gap-2 {{ app()->getLocale() === 'ar' ? 'order-1' : 'order-3' }}" href="{{ route('admin.dashboard') }}" aria-label="Go to dashboard">
             {{-- Optional dual logos for theme switching --}}
             {{-- Provide your actual logo files below, or keep the text fallback. --}}
@@ -12,14 +12,14 @@
             <span class="fw-semibold app-name">{{ config('app.name') }}</span>
         </a>
 
-        <!-- Toggler: order depends on locale -->
-        <button class="navbar-toggler {{ app()->getLocale() === 'ar' ? 'order-3' : 'order-1' }}" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar"
+        <!-- Toggler: keep before collapse on mobile; push to far edge with me-auto -->
+        <button class="navbar-toggler {{ app()->getLocale() === 'ar' ? 'order-2 me-auto' : 'order-1 me-auto' }}" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar"
             aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Collapse: fixed in the middle; ul alignment controls side -->
-        <div class="collapse navbar-collapse order-2" id="adminNavbar">
+        <!-- Collapse: comes after brand & toggler on mobile to avoid pushing them -->
+        <div class="collapse navbar-collapse order-5 order-lg-2" id="adminNavbar">
             <!-- Right: User Dropdown -->
             <ul class="navbar-nav mb-2 mb-lg-0 align-items-lg-center">
                 @auth
