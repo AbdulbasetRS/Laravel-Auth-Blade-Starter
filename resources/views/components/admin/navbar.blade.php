@@ -5,9 +5,9 @@
             {{-- Optional dual logos for theme switching --}}
             {{-- Provide your actual logo files below, or keep the text fallback. --}}
             {{-- Light logo (visible by default) --}}
-            <img src="{{ asset('general/images/logo-light.png') }}" alt="Logo" height="28" class="logo-light" onerror="this.classList.add('d-none')">
+            <img src="{{ asset('assets/images/logo-light.png') }}" alt="Logo" height="28" class="logo-light" onerror="this.classList.add('d-none')">
             {{-- Dark logo --}}
-            <img src="{{ asset('general/images/logo-dark.png') }}" alt="Logo" height="28" class="logo-dark d-none" onerror="this.classList.add('d-none')">
+            <img src="{{ asset('assets/images/logo-dark.png') }}" alt="Logo" height="28" class="logo-dark d-none" onerror="this.classList.add('d-none')">
             {{-- Text fallback --}}
             <span class="fw-semibold app-name">{{ config('app.name') }}</span>
         </a>

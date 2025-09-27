@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="{{ asset('assets/libraries/sweetAlert2/v11.17.2/sweetalert2.min.css') }}">
     
     <!-- Site Stylesheet -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/app.css') }}" rel="stylesheet">
     @yield('main.style')
 </head>
 
@@ -35,7 +35,7 @@
     </div>
 
     <!-- Site Scripts -->
-    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('assetsjs/app.js') }}"></script>
     <script src="{{ asset('assets/libraries/bootstrap/bootstrap-v5.3.8/dist/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/libraries/jquery/jquery-3.7.1/minified.jquery-3.7.1.js') }}"></script>
     <script src="{{ asset('assets/libraries/chart.js/chart-v4.5.0.js') }}"></script>
