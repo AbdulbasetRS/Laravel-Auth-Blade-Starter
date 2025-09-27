@@ -16,5 +16,10 @@ Route::group(
         Route::controller(WelcomeController::class)->as('frontend.')->group(function () {
             Route::get('/', 'home')->name('home');
         });
+
+        // Public fallback (must be last within localized group)
+        Route::fallback(function () {
+            return response()->view('errors.public-404', [], 404);
+        });
     }
 );

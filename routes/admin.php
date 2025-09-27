@@ -18,7 +18,7 @@ Route::controller(AdminAuthController::class)
         Route::post('/register', 'register')->name('register.submit'); // admin.register.submit
         Route::post('/logout', 'logout')->name('logout')->middleware([AppAuthenticate::class]); // admin.logout
         Route::get('/dashboard', 'dashboard')->name('dashboard')->middleware([AppAuthenticate::class, EnsureEmailIsVerified::class]); // admin.dashboard
-        
+
         // Password Reset
         Route::get('/forgot-password', 'showForgotPasswordForm')->name('forgot-password'); // admin.forgot-password
         Route::post('/forgot-password', 'sendResetLink')->name('forgot-password.submit'); // admin.forgot-password.submit
@@ -46,3 +46,10 @@ Route::controller(UserController::class)
         Route::put('/{id}', 'update')->name('update'); // admin.users.update
         Route::delete('/{id}', 'destroy')->name('destroy'); // admin.users.destroy
     });
+
+// Admin fallback (must be last): any unmatched /admin/* goes to admin 404
+Route::prefix('admin')->group(function () {
+    Route::fallback(function () {
+        return response()->view('errors.admin-404', [], 404);
+    });
+});

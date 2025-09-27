@@ -25,13 +25,15 @@
 <body class="font-default" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
     <div class="d-flex flex-column min-vh-100">
 
-        @yield('navbar')
+        @auth
+            @include('components.admin.navbar')
+        @endauth
 
         <main class="flex-grow-1">
             @yield('content')
         </main>
 
-        @yield('footer')
+        @include('components.admin.footer')
 
     </div>
 
