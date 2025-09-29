@@ -74,7 +74,7 @@
                         <i class="fa-solid fa-chevron-down collapse-arrow"></i>
                     </a>
                     <div class="collapse" id="submenu1">
-                        <ul class="nav flex-column ms-4">
+                        <ul class="nav flex-column submenu-indent">
                             <li class="nav-item">
                                 <a class="nav-link" href="#">مشروع 1</a>
                             </li>
@@ -83,6 +83,7 @@
                             </li>
                         </ul>
                     </div>
+
                 </li>
 
                 <!-- Link after list -->
@@ -115,6 +116,73 @@
 
         .nav-link[aria-expanded="true"] .collapse-arrow {
             transform: rotate(180deg);
+        }
+
+        /* Base nav-link */
+        .offcanvas .nav-link {
+            color: var(--app-fg) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            /* شوية نعومة في الحواف */
+            display: block;
+            /* عشان ياخد العرض كله */
+            margin-bottom: 3px;
+            /* المسافة بين العناصر */
+
+        }
+
+        /* Hover & Focus */
+        .offcanvas .nav-link:hover,
+        .offcanvas .nav-link:focus {
+            background-color: rgba(0, 0, 0, 0.08);
+            /* خلفية خفيفة */
+            color: #000 !important;
+
+        }
+
+        /* Dark theme hover */
+        body.theme-dark .offcanvas .nav-link:hover,
+        body.theme-dark .offcanvas .nav-link:focus {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff !important;
+
+        }
+
+        /* Active link (لما القائمة تتفتح أو اللينك selected) */
+        .offcanvas .nav-link.active,
+        .offcanvas .nav-link[aria-expanded="true"] {
+            background-color: rgba(0, 123, 255, 0.2);
+            /* لون مميز */
+            color: #007bff !important;
+        }
+
+        /* Dark theme active */
+        body.theme-dark .offcanvas .nav-link.active,
+        body.theme-dark .offcanvas .nav-link[aria-expanded="true"] {
+            background-color: rgba(0, 123, 255, 0.3);
+            color: #4dabff !important;
+        }
+
+        .offcanvas .nav-link {
+            line-height: 1.5rem;
+            /* طول سطر ثابت */
+            padding: 0.5rem 1rem;
+            /* padding ثابت */
+        }
+
+        /* الافتراضي (LTR) */
+        .submenu-indent {
+            margin-left: 1.5rem;
+            
+            /* نفس قيمة ms-4 */
+        }
+
+        /* RTL */
+        [dir="rtl"] .submenu-indent {
+            margin-left: 0;
+            /* margin-right: 1.5rem; */
+            /* عكسها */
         }
     </style>
 @endauth
