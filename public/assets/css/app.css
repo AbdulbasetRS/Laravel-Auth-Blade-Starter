@@ -175,3 +175,51 @@ body.theme-dark footer .dropdown-item:focus {
 /* Pagination and breadcrumb (if used) */
 [dir="rtl"] .breadcrumb-item + .breadcrumb-item::before { float: right; }
 [dir="rtl"] .pagination { direction: ltr; }
+
+
+/* Base nav-link */
+.offcanvas .nav-link {
+    color: var(--app-fg) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem; /* شوية نعومة في الحواف */
+    display: block;          /* عشان ياخد العرض كله */
+    margin-bottom: 3px;      /* المسافة بين العناصر */
+
+}
+
+/* Hover & Focus */
+.offcanvas .nav-link:hover,
+.offcanvas .nav-link:focus {
+    background-color: rgba(0, 0, 0, 0.08); /* خلفية خفيفة */
+    color: #000 !important;
+    
+}
+
+/* Dark theme hover */
+body.theme-dark .offcanvas .nav-link:hover,
+body.theme-dark .offcanvas .nav-link:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff !important;
+    
+}
+
+/* Active link (لما القائمة تتفتح أو اللينك selected) */
+.offcanvas .nav-link.active,
+.offcanvas .nav-link[aria-expanded="true"] {
+    background-color: rgba(0, 123, 255, 0.2); /* لون مميز */
+    color: #007bff !important;
+}
+
+/* Dark theme active */
+body.theme-dark .offcanvas .nav-link.active,
+body.theme-dark .offcanvas .nav-link[aria-expanded="true"] {
+    background-color: rgba(0, 123, 255, 0.3);
+    color: #4dabff !important;
+}
+
+.offcanvas .nav-link {
+    line-height: 1.5rem;   /* طول سطر ثابت */
+    padding: 0.5rem 1rem;  /* padding ثابت */
+}
+

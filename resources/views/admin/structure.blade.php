@@ -26,7 +26,8 @@
     <div class="d-flex flex-column min-vh-100">
 
         @auth
-            @include('components.admin.navbar')
+            @include('components.admin.sidebar')
+            {{-- @include('components.admin.navbar') --}}
         @endauth
 
         <main class="flex-grow-1">
