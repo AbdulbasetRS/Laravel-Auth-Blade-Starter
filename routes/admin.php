@@ -31,23 +31,29 @@ Route::controller(AdminAuthController::class)
         Route::post('/verification-notification', 'sendVerificationNotification')->name('verification-notification.submit'); // admin.verification-notification.submit
     });
 
-/*
-    |--------------------------------------------------------------------------
-    | Resource Routes for Admin Users Management
-    |--------------------------------------------------------------------------
-    | GET       /admin/users              -> admin.users.index
-    | GET       /admin/users/create       -> admin.users.create
-    | POST      /admin/users              -> admin.users.store
-    | GET       /admin/users/{slug}       -> admin.users.show
-    | GET       /admin/users/{slug}/edit  -> admin.users.edit
-    | PUT/PATCH /admin/users/{slug}       -> admin.users.update
-    | DELETE    /admin/users/{slug}       -> admin.users.destroy
-*/
-Route::resource('users', UserController::class)
-    ->parameters(['users' => 'slug'])
-    ->prefix('admin')
+
+Route::prefix('admin')
     ->as('admin.')
-    ->middleware([AppAuthenticate::class, EnsureEmailIsVerified::class]);
+    ->middleware([AppAuthenticate::class, EnsureEmailIsVerified::class])
+    ->group(function () {
+
+        /*
+            |--------------------------------------------------------------------------
+            | Resource Routes for Admin Users Management
+            |--------------------------------------------------------------------------
+            | GET       /admin/users              -> admin.users.index
+            | GET       /admin/users/create       -> admin.users.create
+            | POST      /admin/users              -> admin.users.store
+            | GET       /admin/users/{slug}       -> admin.users.show
+            | GET       /admin/users/{slug}/edit  -> admin.users.edit
+            | PUT/PATCH /admin/users/{slug}       -> admin.users.update
+            | DELETE    /admin/users/{slug}       -> admin.users.destroy
+        */
+        Route::resource('users', UserController::class)->parameters(['users' => 'slug']);
+
+        
+    });
+
 
 // Admin fallback (must be last): any unmatched /admin/* goes to admin 404
 Route::prefix('admin')->group(function () {

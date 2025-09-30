@@ -60,30 +60,33 @@
 
                 <!-- Link before list -->
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="#">
+                    <a class="nav-link d-flex align-items-center" href="{{ route('admin.dashboard') }}">
                         <i class="fa-solid fa-house me-2"></i>
                         <span>الرئيسية</span>
                     </a>
                 </li>
 
-                <!-- Collapse Menu -->
+                <!-- Users Management -->
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center justify-content-between" data-bs-toggle="collapse"
-                        href="#submenu1" role="button" aria-expanded="false" aria-controls="submenu1">
-                        <span><i class="fa-solid fa-folder me-2"></i> المشاريع</span>
+                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
+                        href="#userMenu" role="button" aria-expanded="false" aria-controls="userMenu">
+                        <span><i class="fa-solid fa-users me-2"></i>إدارة المستخدمين</span>
                         <i class="fa-solid fa-chevron-down collapse-arrow"></i>
                     </a>
-                    <div class="collapse" id="submenu1">
+                    <div class="collapse" id="userMenu">
                         <ul class="nav flex-column submenu-indent">
                             <li class="nav-item">
-                                <a class="nav-link" href="#">مشروع 1</a>
+                                <a class="nav-link" href="{{ route('admin.users.index') }}">
+                                    <i class="fa-solid fa-users me-2"></i> كل المستخدمين
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">مشروع 2</a>
+                                <a class="nav-link" href="{{ route('admin.users.create') }}">
+                                    <i class="fa-solid fa-user-plus me-2"></i> إضافة مستخدم
+                                </a>
                             </li>
                         </ul>
                     </div>
-
                 </li>
 
                 <!-- Link after list -->
