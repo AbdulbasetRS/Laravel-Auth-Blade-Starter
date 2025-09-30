@@ -31,21 +31,23 @@ Route::controller(AdminAuthController::class)
         Route::post('/verification-notification', 'sendVerificationNotification')->name('verification-notification.submit'); // admin.verification-notification.submit
     });
 
-
-// Admin Users Management
-Route::controller(UserController::class)
-    ->prefix('admin/users')
-    ->as('admin.users.')
-    ->middleware([AppAuthenticate::class, EnsureEmailIsVerified::class])
-    ->group(function () {
-        Route::get('/', 'index')->name('index'); // admin.users.index
-        Route::get('/create', 'create')->name('create'); // admin.users.create
-        Route::post('/', 'store')->name('store'); // admin.users.store
-        Route::get('/{id}', 'show')->name('show'); // admin.users.show
-        Route::get('/{id}/edit', 'edit')->name('edit'); // admin.users.edit
-        Route::put('/{id}', 'update')->name('update'); // admin.users.update
-        Route::delete('/{id}', 'destroy')->name('destroy'); // admin.users.destroy
-    });
+/*
+    |--------------------------------------------------------------------------
+    | Resource Routes for Admin Users Management
+    |--------------------------------------------------------------------------
+    | GET       /admin/users              -> admin.users.index
+    | GET       /admin/users/create       -> admin.users.create
+    | POST      /admin/users              -> admin.users.store
+    | GET       /admin/users/{slug}       -> admin.users.show
+    | GET       /admin/users/{slug}/edit  -> admin.users.edit
+    | PUT/PATCH /admin/users/{slug}       -> admin.users.update
+    | DELETE    /admin/users/{slug}       -> admin.users.destroy
+*/
+Route::resource('users', UserController::class)
+    ->parameters(['users' => 'slug'])
+    ->prefix('admin')
+    ->as('admin.')
+    ->middleware([AppAuthenticate::class, EnsureEmailIsVerified::class]);
 
 // Admin fallback (must be last): any unmatched /admin/* goes to admin 404
 Route::prefix('admin')->group(function () {

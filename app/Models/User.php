@@ -49,7 +49,7 @@ class User extends Authenticatable
 
     function getRouteKeyName()
     {
-        return 'id';
+        return 'slug';
     }
 
     public function profile()

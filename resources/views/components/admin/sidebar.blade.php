@@ -174,15 +174,11 @@
         /* الافتراضي (LTR) */
         .submenu-indent {
             margin-left: 1.5rem;
-            
-            /* نفس قيمة ms-4 */
         }
 
         /* RTL */
         [dir="rtl"] .submenu-indent {
             margin-left: 0;
-            /* margin-right: 1.5rem; */
-            /* عكسها */
         }
     </style>
 @endauth
