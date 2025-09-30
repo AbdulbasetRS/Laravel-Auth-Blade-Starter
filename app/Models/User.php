@@ -41,6 +41,8 @@ class User extends Authenticatable
         'password' => 'hashed',
         'status' => UserStatus::class,
         'type' => UserType::class,
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     protected $with = [

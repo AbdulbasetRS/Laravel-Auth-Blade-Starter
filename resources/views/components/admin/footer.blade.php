@@ -1,4 +1,4 @@
-<footer class="mt-auto border-top bg-light">
+<footer class=" border-top bg-light mt-5">
     <div class="container py-3 d-flex align-items-center justify-content-between">
         <!-- Left: Language Dropdown + Theme Toggle -->
         <div class="d-flex align-items-center gap-3">

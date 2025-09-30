@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom shadow-sm  mb-5">
     <div class="container">
         <!-- Brand: keep before collapse on mobile to avoid jumping -->
         <a class="navbar-brand d-flex align-items-center gap-2 {{ app()->getLocale() === 'ar' ? 'order-1' : 'order-5' }}"
