@@ -39,8 +39,15 @@
         </div>
 
         <!-- Right: Copyright -->
-        <div class="text-muted small">
-            &copy; {{ date('Y') }} {{ config('app.name') }}. جميع الحقوق محفوظة.
+        <div class="text-muted small d-flex flex-column align-items-end">
+            <div class="mb-1">
+                <span  id="serverTime">{{ now()->format('Y-m-d H:i:s') }}</span>
+                <span> - {{ config('app.timezone') }}</span>
+            </div>
+            
+            <div>
+                &copy; {{ date('Y') }} {{ config('app.name') }}. جميع الحقوق محفوظة.
+            </div>
         </div>
     </div>
 
@@ -48,6 +55,33 @@
         (function() {
             const storageKey = 'theme';
             const body = document.body;
+            
+            // Update server time every second
+            function updateServerTime() {
+                const now = new Date();
+                const currentLocale = document.documentElement.lang || '{{ app()->getLocale() }}';
+                
+                // Use 'ar-EG' for Arabic, current locale for others
+                const displayLocale = currentLocale.startsWith('ar') ? 'ar-EG' : currentLocale;
+                
+                const options = { 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: displayLocale === 'ar-EG' // Use 12-hour format for Arabic, 24-hour for others
+                };
+                
+                // Use the display locale for formatting
+                const timeString = now.toLocaleString(displayLocale, options);
+                document.getElementById('serverTime').textContent = timeString;
+            }
+            
+            // Update time immediately and then every second
+            updateServerTime();
+            setInterval(updateServerTime, 1000);
             const btn = document.getElementById('themeToggle');
             const iconDark = btn?.querySelector('.theme-icon-dark');
             const iconLight = btn?.querySelector('.theme-icon-light');
