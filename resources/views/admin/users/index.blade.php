@@ -3,40 +3,69 @@
 @section('title', 'Users')
 
 @section('main.style')
- <style>
-    /* Light mode */
-body .dt-button-collection .dt-button,
-body .dt-button-collection .dropdown-item {
-    background-color: #fff !important;
-    color: #212529 !important;
-    border: none !important;
-    text-align: left;
-    padding: .375rem .75rem !important;
-}
+    <style>
+        /* ✅ DataTables Column visibility dropdown items */
+        .dt-button-collection .dt-button,
+        .dt-button-collection .dropdown-item {
+            background-color: var(--app-bg) !important;
+            color: var(--app-fg) !important;
+            border: none !important;
+            text-align: left;
+            padding: .375rem .75rem !important;
+        }
 
-body .dt-button-collection .dt-button:hover,
-body .dt-button-collection .dropdown-item:hover {
-    background-color: #0d6efd !important; /* أزرق Bootstrap */
-    color: #fff !important;
-}
+        /* Hover & Focus */
+        .dt-button-collection .dt-button:hover,
+        .dt-button-collection .dt-button:focus,
+        .dt-button-collection .dropdown-item:hover,
+        .dt-button-collection .dropdown-item:focus {
+            background-color: rgba(13, 110, 253, 0.1) !important;
+            /* نفس لون الـ hover في Bootstrap */
+            color: var(--app-fg) !important;
+        }
 
-/* Dark mode */
-body .dt-button-collection .dt-button,
-body .dt-button-collection .dropdown-item {
-    background-color: #2b2b2b !important;
-    color: #f1f1f1 !important;
-    border: none !important;
-    text-align: left;
-    padding: .375rem .75rem !important;
-}
+        /* Light mode */
+        .dt-button-collection {
+            background-color: #dfe6e9 !important;
+            border: 1px solid rgba(0, 0, 0, 0.1) !important;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .15) !important;
+        }
 
-body .dt-button-collection .dt-button:hover,
-body .dt-button-collection .dropdown-item:hover {
-    background-color: #444 !important;
-    color: #fff !important;
-}
+        /* Dark mode */
+        body.theme-dark .dt-button-collection {
+            background-color: #1f2426 !important;
+            /* نفس لون الفوتر/الناڤ بار */
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .6) !important;
+        }
 
- </style>
+        html[dir="rtl"] div.dt-buttons span.dt-button-down-arrow,
+        body[dir="rtl"] div.dt-buttons span.dt-button-down-arrow {
+            padding-left: 0;
+            padding-right: 10px;
+        }
+
+        /* الوضع العادي (LTR) */
+        div.dt-button-collection .dt-button-active:after {
+            right: 1em;
+        }
+
+        div.dt-button-collection .dt-button {
+            text-align: left;
+        }
+
+        /* الوضع العربي (RTL) */
+        html[dir="rtl"] div.dt-button-collection .dt-button-active:after,
+        body[dir="rtl"] div.dt-button-collection .dt-button-active:after {
+            left: 1em;
+            right: auto;
+        }
+
+        html[dir="rtl"] div.dt-button-collection .dt-button,
+        body[dir="rtl"] div.dt-button-collection .dt-button {
+            text-align: right;
+        }
+    </style>
 @endsection
 
 @section('main.script')
@@ -88,7 +117,7 @@ body .dt-button-collection .dropdown-item:hover {
                     [10, 20, 50, -1],
                     [10, 20, 50, "All"]
                 ],
-             
+
                 processing: true,
                 serverSide: true,
                 ajax: {
@@ -149,7 +178,7 @@ body .dt-button-collection .dropdown-item:hover {
                     className: 'dt-center'
                 }]
             });
-    
+
             $('#filter-status, #filter-type').on('change', function() {
                 table.ajax.reload();
             });
@@ -211,4 +240,3 @@ body .dt-button-collection .dropdown-item:hover {
         </div>
     </div>
 @endsection
-       
