@@ -112,12 +112,14 @@ body.theme-dark .dataTables_length select {
 }
 
 .dataTables_processing {
-    background: var(--bs-primary) !important;
+    /* background: var(--bs-primary) !important; */
+    background: transparent !important;
     color: #dfe6e9 !important;
     font-weight: 600;
 }
 
 .dataTables_wrapper .dataTables_processing{
     padding-top: unset;
+
 }
 

@@ -2,12 +2,6 @@
 
 @section('title', 'Users')
 
-@section('main.style')
-    <style>
-
-    </style>
-@endsection
-
 @section('main.script')
     <script>
         $(document).ready(function() {
@@ -42,15 +36,24 @@
                     },
                     {
                         data: 'status',
-                        name: 'status'
+                        name: 'status',
+                        render: function(data) {
+                            return data ? data.toString().toUpperCase() : '';
+                        }
                     },
                     {
                         data: 'type',
-                        name: 'type'
+                        name: 'type',
+                        render: function(data) {
+                            return data ? data.toString().toUpperCase() : '';
+                        }
                     },
                     {
                         data: 'can_login',
-                        name: 'can_login'
+                        name: 'can_login',
+                        render: function(data) {
+                            return data ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-danger">No</span>';
+                        }
                     },
                     {
                         data: 'created_at',
