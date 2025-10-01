@@ -80,6 +80,13 @@
 @section('content')
     <div class="container">
         <div class="row">
+            @if (session('error'))
+                <div class="col-12">
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                </div>
+            @endif
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">

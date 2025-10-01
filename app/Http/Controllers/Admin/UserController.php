@@ -73,9 +73,14 @@ class UserController extends Controller
         return view('admin.users.store');
     }
 
-    public function show($id)
+    public function show($slug)
     {
-        $user = User::findOrFail($id);
+        $user = User::where('slug', $slug)->first();
+        
+        if (!$user) {
+            return redirect()->route('admin.users.index')->with('error', 'User not found');
+        }
+        
         return view('admin.users.show', compact('user'));
     }
 
