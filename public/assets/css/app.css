@@ -163,15 +163,17 @@ body.theme-dark footer .dropdown-item:focus {
     margin-right: .5rem !important;
 }
 
-
-
-
 [dir="ltr"] .dropdown-menu-end[data-bs-popper]{
     right: unset !important;
 }
 
 [dir="rtl"] .dropdown-item {
     text-align: start !important;
+}
+
+[dir="rtl"] .accordion-button::after {
+    margin-left: unset !important;
+    margin-right: auto !important;
 }
 
 /* Text alignment helpers (common cases) */
