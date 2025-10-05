@@ -15,6 +15,16 @@ This project is designed to be a quick starting point for new Laravel applicatio
 - Clean and extendable structure for quick development
 - Built-in localization using **mcamara/laravel-localization** (i18n-ready)
 
+## Included Packages
+
+### Core Packages
+- **mcamara/laravel-localization** (v2.3+): Provides an easy way to support multiple languages in your Laravel application.
+- **yajra/laravel-datatables** (v12): Powerful server-side and client-side datatables integration for Laravel.
+
+### Development Packages
+- **barryvdh/laravel-debugbar** (v3.16+): A debug bar for Laravel to help with debugging and profiling.
+- **spatie/laravel-ignition** (v2.9+): A beautiful error page for Laravel applications.
+
 ---
 
 ##  Installation
@@ -36,6 +46,7 @@ composer install
 cp .env.example .env
 php artisan key:generate
 php artisan migrate
+php artisan storage:link
 php artisan serve
 ```
 

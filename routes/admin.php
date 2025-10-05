@@ -49,9 +49,9 @@ Route::prefix('admin')
             | PUT/PATCH /admin/users/{slug}       -> admin.users.update
             | DELETE    /admin/users/{slug}       -> admin.users.destroy
         */
-        Route::resource('users', UserController::class)->parameters(['users' => 'slug']);
-
-        
+        Route::resource('users', UserController::class)
+            ->parameters(['users' => 'user:slug'])
+            ->names('users');
     });
 
 

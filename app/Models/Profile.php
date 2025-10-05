@@ -17,7 +17,6 @@ class Profile extends Model
         'middle_name',
         'last_name',
         'full_name',
-        'kinship',
         'whatapp_number',
         'telegram_number',
         'date_of_birth',
