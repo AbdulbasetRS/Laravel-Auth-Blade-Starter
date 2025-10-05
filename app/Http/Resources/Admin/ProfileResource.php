@@ -4,6 +4,7 @@ namespace App\Http\Resources\Admin;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Carbon\Carbon;
 
 class ProfileResource extends JsonResource
 {
@@ -14,6 +15,11 @@ class ProfileResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        $data = parent::toArray($request);
+    
+        $data['created_at'] = Carbon::parse($this->created_at)->format('Y-m-d H:i:s');
+        $data['updated_at'] = Carbon::parse($this->updated_at)->format('Y-m-d H:i:s');
+
+        return $data;
     }
 }

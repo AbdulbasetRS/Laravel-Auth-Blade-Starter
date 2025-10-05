@@ -157,15 +157,21 @@ body.theme-dark footer .dropdown-item:focus {
     margin-right: 0 !important;
     margin-left: 1rem !important; /* space from toggler when reversed */
 }
+
 [dir="rtl"] .navbar .navbar-toggler {
     margin-left: 0 !important;
     margin-right: .5rem !important;
 }
 
-/* Dropdown alignment for RTL */
-[dir="rtl"] .dropdown-menu-end {
-    right: auto;
-    left: 0;
+
+
+
+[dir="ltr"] .dropdown-menu-end[data-bs-popper]{
+    right: unset !important;
+}
+
+[dir="rtl"] .dropdown-item {
+    text-align: start !important;
 }
 
 /* Text alignment helpers (common cases) */
@@ -175,3 +181,8 @@ body.theme-dark footer .dropdown-item:focus {
 /* Pagination and breadcrumb (if used) */
 [dir="rtl"] .breadcrumb-item + .breadcrumb-item::before { float: right; }
 [dir="rtl"] .pagination { direction: ltr; }
+
+[dir="rtl"] .dropdown-toggle::after {
+    margin-left: 0 !important;
+    margin-right: .255em !important; /* space from toggler when reversed */
+}

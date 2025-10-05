@@ -80,7 +80,8 @@ class UserController extends Controller
         if (!$user) {
             return redirect()->route('admin.users.index')->with('error', 'User not found');
         }
-        
+        $user = new UserResource($user);
+        // return $user;
         return view('admin.users.show', compact('user'));
     }
 
