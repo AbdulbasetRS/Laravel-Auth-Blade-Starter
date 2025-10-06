@@ -24,8 +24,8 @@
                             <!-- User Image -->
                             <div class="col-md-3 text-center mb-4">
                                 <div class="mb-3">
-                                    @if ($user->profile && $user->profile->avatar)
-                                        <img src="{{ asset('storage/' . $user->profile->avatar) }}" alt="صورة المستخدم"
+                                    @if ($user->profile && $user->profile->avatar_url)
+                                        <img src="{{ $user->profile->avatar_url }}" alt="صورة المستخدم"
                                             class="img-thumbnail" style="max-width: 200px;">
                                     @else
                                         <div class="bg-light rounded-circle d-flex align-items-center justify-content-center"
