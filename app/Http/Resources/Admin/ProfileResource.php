@@ -17,7 +17,6 @@ class ProfileResource extends JsonResource
     {
         $data = parent::toArray($request);
         
-        $data['avatar_url'] = \App\Helpers\PathHelper::userAvatarUrl($this->user_id, $this->avatar);
         $data['created_at'] = Carbon::parse($this->created_at)->format('Y-m-d H:i:s');
         $data['updated_at'] = Carbon::parse($this->updated_at)->format('Y-m-d H:i:s');
 

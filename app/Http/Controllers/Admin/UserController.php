@@ -93,8 +93,9 @@ class UserController extends Controller
         $user = User::where('slug', $slug)->firstOrFail();
         
         $user = new UserResource($user);
+
         // return $user;
-        $user = json_decode(json_encode($user)) ;
+        // $user = json_decode(json_encode($user)) ;
         $statuses = UserStatus::cases();
         $types = UserType::cases();
 

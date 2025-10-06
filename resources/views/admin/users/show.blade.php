@@ -138,7 +138,7 @@
                                 </span>
                                 <span>
                                     <i class="fas fa-sync-alt me-1"></i>
-                                    آخر تحديث: {{ $user->updated_at->diffForHumans() }}
+                                    آخر تحديث: {{ $user->updated_at?->diffForHumans() ?? 'لا يوجد' }}
                                 </span>
                             </div>
                             <div>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -35,9 +36,28 @@ class Profile extends Model
 
     ];
 
-    function getRouteKeyName()
+    protected $appends = [
+        'full_name',
+        'avatar_url',
+    ];
+
+    public function getRouteKeyName()
     {
         return 'id';
+    }
+
+    protected function fullName(): Attribute
+    {
+        return new Attribute(
+            get: fn () => $this->first_name.' '.$this->last_name,
+        );
+    }
+
+    protected function avatarUrl(): Attribute
+    {
+        return new Attribute(
+            get: fn () => $this->avatar ? \App\Helpers\PathHelper::userAvatarUrl($this->user_id, $this->avatar) : null,
+        );
     }
 
     public function user()
