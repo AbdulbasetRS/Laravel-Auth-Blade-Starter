@@ -255,11 +255,14 @@
                 <div id="collapseAvatar" class="accordion-collapse collapse" aria-labelledby="headingAvatar" data-bs-parent="#userAccordion">
                     <div class="accordion-body">
                         <div class="mb-3">
-                           
                             @if($user->profile?->avatar_url)
-                                <img src="{{ $user->profile->avatar_url }}" alt="Avatar" class="img-thumbnail mb-2" width="100">
+                                <div class="d-flex justify-content-center">
+                                    <img src="{{ $user->profile->avatar_url }}"
+                                         alt="Avatar"
+                                         class="rounded-circle img-thumbnail mb-2"
+                                         style="width:200px; height:200px; object-fit:cover;">
+                                </div>
                             @endif
-                     
                             <input type="file" name="avatar" id="avatar" class="form-control @error('avatar') is-invalid @else @if(old('avatar')) is-valid @endif @enderror">
                             @error('avatar') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
