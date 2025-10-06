@@ -91,7 +91,7 @@ class UserController extends Controller
     public function edit($slug)
     {
         $user = User::where('slug', $slug)->firstOrFail();
-        
+
         $user = new UserResource($user);
 
         // return $user;
@@ -106,71 +106,44 @@ class UserController extends Controller
     {
         $user = User::where('slug', $slug)->firstOrFail();
 
-        // 🧩 Update user main fields
-        $user->fill([
-            'username' => $request->username,
-            'email' => $request->email,
-            'mobile_number' => $request->mobile_number,
-            'national_id' => $request->national_id,
-            'nationality' => $request->nationality,
-            'passport_number' => $request->passport_number,
-            'status' => $request->status,
-            'type' => $request->type,
-            'can_login' => $request->can_login,
-            'status_details' => $request->status_details,
-        ]);
+        $user->fill($request->userData());
 
-        // 🧱 Update profile if exists
         if ($user->profile) {
-            $user->profile->fill([
-                'first_name' => $request->first_name,
-                'middle_name' => $request->middle_name,
-                'last_name' => $request->last_name,
-                'whatapp_number' => $request->whatapp_number,
-                'telegram_number' => $request->telegram_number,
-                'date_of_birth' => $request->date_of_birth,
-                'gender' => $request->gender,
-                'title' => $request->title,
-                'address' => $request->address,
-                'note' => $request->note,
-            ]);
+            $user->profile->fill($request->profileData());
         }
 
-        // 🖼️ Handle avatar upload
         if ($request->hasFile('avatar')) {
-
-            // حذف الصورة القديمة لو موجودة
             if ($user->profile && $user->profile->avatar) {
                 PathHelper::deleteUserAvatar($user->id, $user->profile->avatar);
             }
 
-            // تخزين الصورة الجديدة
             $filename = PathHelper::storeUserAvatar($user->id, $request->file('avatar'));
 
-            // حفظ اسم الصورة الجديدة في الـ DB
             if ($user->profile) {
                 $user->profile->avatar = $filename;
-                $user->profile->save();
             }
         }
 
-        // 🔐 Update password if provided
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
 
-        // 💾 Save main user
-        $user->save();
+        $userChanged = $user->isDirty();
+        $profileChanged = $user->profile?->isDirty();
 
-        // 💾 Save profile (لو لسه مش محفوظ)
-        if ($user->profile) {
-            $user->profile->save();
+        if (! $userChanged && ! $profileChanged) {
+            return redirect()
+                ->route('admin.users.edit', $user->slug)
+                ->with('info', 'لم يتم إجراء أي تغييرات');
         }
+
+        // 💾 Save user and profile together
+        $user->push();
 
         // ✅ Done
         return redirect()
             ->route('admin.users.edit', $user->slug)
-            ->with('success', 'User updated successfully');
+            ->with('success', 'تم تحديث بيانات المستخدم بنجاح');
     }
 
     public function destroy($slug)

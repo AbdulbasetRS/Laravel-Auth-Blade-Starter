@@ -18,12 +18,12 @@ class UserUpdateRequest extends FormRequest
 
         return [
             // User fields
-            'username' => 'required|string|max:255|unique:users,username,' . $userId,
-            'email' => 'required|email|max:255|unique:users,email,' . $userId,
-            'mobile_number' => 'nullable|string|max:20|unique:users,mobile_number,' . $userId,
-            'national_id' => 'nullable|string|max:20|unique:users,national_id,' . $userId,
+            'username' => 'required|string|max:255|unique:users,username,'.$userId,
+            'email' => 'required|email|max:255|unique:users,email,'.$userId,
+            'mobile_number' => 'nullable|string|max:20|unique:users,mobile_number,'.$userId,
+            'national_id' => 'nullable|string|max:20|unique:users,national_id,'.$userId,
             'nationality' => 'nullable|string|max:255',
-            'passport_number' => 'nullable|string|max:255|unique:users,passport_number,' . $userId,
+            'passport_number' => 'nullable|string|max:255|unique:users,passport_number,'.$userId,
             'status' => 'required',
             'type' => 'required',
             'can_login' => 'required|boolean',
@@ -47,5 +47,37 @@ class UserUpdateRequest extends FormRequest
             // Password
             'password' => 'nullable|string|min:8|confirmed',
         ];
+    }
+
+    public function userData(): array
+    {
+        return $this->only([
+            'username',
+            'email',
+            'mobile_number',
+            'national_id',
+            'nationality',
+            'passport_number',
+            'status',
+            'type',
+            'can_login',
+            'status_details',
+        ]);
+    }
+
+    public function profileData(): array
+    {
+        return $this->only([
+            'first_name',
+            'middle_name',
+            'last_name',
+            'whatapp_number',
+            'telegram_number',
+            'date_of_birth',
+            'gender',
+            'title',
+            'address',
+            'note',
+        ]);
     }
 }
