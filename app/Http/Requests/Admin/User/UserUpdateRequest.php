@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\User;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UserUpdateRequest extends FormRequest
 {
@@ -47,6 +48,24 @@ class UserUpdateRequest extends FormRequest
             // Password
             'password' => 'nullable|string|min:8|confirmed',
         ];
+    }
+
+    public function failedAuthorization()
+    {
+        // لو الطلب JSON (API)
+        if ($this->expectsJson()) {
+            throw new HttpResponseException(response()->json([
+                'status' => false,
+                'message' => 'ليس لديك صلاحية لتحديث هذا المستخدم.',
+            ], 403));
+        }
+
+        // لو الطلب Web → يفتح View
+        throw new HttpResponseException(
+            response()->view('errors.admin.unauthorized', [
+                'message' => 'ليس لديك صلاحية لتحديث هذا المستخدم.',
+            ], 403)
+        );
     }
 
     public function userData(): array
