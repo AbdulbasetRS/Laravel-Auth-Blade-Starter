@@ -26,7 +26,7 @@
         <div class="collapse navbar-collapse order-5 order-lg-2" id="adminNavbar">
             <!-- Right: User Dropdown -->
             <ul class="navbar-nav mb-2 mb-lg-0 align-items-lg-center">
-                <li class="nav-item"><a class="nav-link" href="#">Link</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.login') }}">Login</a></li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userMenu" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">
