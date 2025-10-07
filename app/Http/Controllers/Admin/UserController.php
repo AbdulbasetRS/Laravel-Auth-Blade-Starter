@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Hash;
+use App\Exceptions\UserNotFoundException;
 
 class UserController extends Controller
 {
@@ -80,7 +81,8 @@ class UserController extends Controller
         $user = User::where('slug', $slug)->first();
 
         if (! $user) {
-            return redirect()->route('admin.users.index')->with('error', 'User not found');
+            throw new UserNotFoundException();
+            // return redirect()->route('admin.users.index')->with('error', 'User not found');
         }
         $user = new UserResource($user);
 
