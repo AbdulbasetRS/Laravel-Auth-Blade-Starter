@@ -6,12 +6,12 @@ use App\Enums\UserStatus;
 use App\Enums\UserType;
 use App\Helpers\PathHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\User\UserStoreRequest;
 use App\Http\Requests\Admin\User\UserUpdateRequest;
 use App\Http\Resources\Admin\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\Hash;
 use App\Exceptions\UserNotFoundException;
 
 class UserController extends Controller
@@ -71,9 +71,27 @@ class UserController extends Controller
         return view('admin.users.create', compact('statuses', 'types'));
     }
 
-    public function store(Request $request)
+    public function store(UserStoreRequest $request)
     {
-        return view('admin.users.store');
+        $user = new User();
+        
+        $user->fill($request->userData());
+        $user->password = $request->password;
+        $user->save();
+
+        // Create and fill profile
+        $profile = $user->profile()->create($request->profileData());
+
+        // Handle avatar if uploaded
+        if ($request->hasFile('avatar')) {
+            $filename = PathHelper::storeUserAvatar($user->id, $request->file('avatar'));
+            $profile->avatar = $filename;
+            $profile->save();
+        }
+
+        return redirect()
+            ->route('admin.users.edit', $user->slug)
+            ->with('success', 'User created successfully');
     }
 
     public function show($slug)
@@ -127,7 +145,7 @@ class UserController extends Controller
         }
 
         if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
+            $user->password = $request->password; // لا حاجة لـ Hash::make
         }
 
         $userChanged = $user->isDirty();
