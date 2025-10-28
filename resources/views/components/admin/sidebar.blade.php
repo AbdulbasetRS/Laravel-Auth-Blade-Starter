@@ -96,6 +96,18 @@
                         <span>الإعدادات</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="#">
+                        <i class="fa-solid fa-gear me-2"></i>
+                        <span>Upload to Google Drive </span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="#">
+                        <i class="fa-solid fa-gear me-2"></i>
+                        <span>List Files From Google Drive </span>
+                    </a>
+                </li>
             </ul>
 
             <!-- Logout Section -->
