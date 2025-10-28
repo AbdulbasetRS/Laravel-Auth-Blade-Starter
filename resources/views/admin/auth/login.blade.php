@@ -18,7 +18,7 @@
                             <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
                         @endif
 
-                        {{-- General validation errors (non field-specific) --}}
+                        {{-- General validation errors --}}
                         @if ($errors->any())
                             <div class="alert alert-danger" role="alert">
                                 <ul class="mb-0">
@@ -60,17 +60,33 @@
                                     </label>
                                 </div>
                                 @if (Route::has('admin.forgot-password'))
-                                    <a class="small text-decoration-none" href="{{ route('admin.forgot-password') }}">نسيت
-                                        كلمة المرور؟</a>
+                                    <a class="small text-decoration-none" href="{{ route('admin.forgot-password') }}">
+                                        نسيت كلمة المرور؟
+                                    </a>
                                 @endif
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100">تسجيل الدخول</button>
                         </form>
+
+                        {{-- 🔹 فاصل بسيط --}}
+                        <div class="d-flex align-items-center my-3">
+                            <hr class="flex-grow-1">
+                            <span class="mx-2 text-muted small">أو</span>
+                            <hr class="flex-grow-1">
+                        </div>
+
+                        {{-- 🔹 زر تسجيل الدخول باستخدام Google --}}
+                        <a href="{{ route('admin.google.login') }}" class="btn btn-outline-danger w-100">
+                            <i class="bi bi-google me-2"></i> تسجيل الدخول باستخدام Google
+                        </a>
+
                         <div class="text-center mt-3">
                             @if (Route::has('admin.register'))
                                 <span class="small">لا تملك حسابًا؟
-                                    <a class="text-decoration-none" href="{{ route('admin.register') }}">إنشاء حساب جديد</a>
+                                    <a class="text-decoration-none" href="{{ route('admin.register') }}">
+                                        إنشاء حساب جديد
+                                    </a>
                                 </span>
                             @endif
                         </div>

@@ -57,13 +57,13 @@ class UserSeeder extends Seeder
             'can_login' => true,
             'email_verified_at' => now(),
         ]);
-        $user->profile()->create(Profile::factory()->make()->toArray());
+        $user->profile()->create(Profile::factory()->raw());
 
         User::factory()
             ->count(20)
             ->create()
             ->each(function ($user) {
-                $user->profile()->create(Profile::factory()->make()->toArray());
+                $user->profile()->create(Profile::factory()->raw());
             });
     }
 }

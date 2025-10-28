@@ -13,17 +13,19 @@ return new class extends Migration
     {
         Schema::create('auth_providers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users','id')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
             $table->enum('provider_name', ['google', 'github', 'facebook', 'twitter', 'linkedin', 'instagram'])->index();
             $table->string('provider_user_id');
-            $table->string('provider_access_token')->nullable();
-            $table->string('refresh_token')->nullable();
+            $table->text('provider_access_token')->nullable();
+            $table->text('refresh_token')->nullable();
             $table->timestamp('token_expires_at')->nullable();
             $table->string('email')->nullable();
             $table->string('name')->nullable();
             $table->string('avatar')->nullable();
             $table->foreignId('updated_by')->nullable()->constrained('users', 'id')->onDelete('set null');
             $table->timestamps();
+
+            $table->unique(['provider_name', 'provider_user_id']); // عشان ميكررش نفس الحساب مرتين
         });
     }
 

@@ -6,11 +6,18 @@ use App\Http\Controllers\Admin\VerificationController as AdminVerificationContro
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Middleware\Authenticate as AppAuthenticate;
 use App\Http\Middleware\EnsureEmailIsVerified;
+use App\Http\Controllers\Auth\GoogleController as AdminGoogleController;
+
 
 Route::controller(AdminAuthController::class)
     ->prefix('admin')
     ->as('admin.')
     ->group(function () {
+
+        // Google Authentication
+        Route::get('auth/google', [AdminGoogleController::class, 'redirectToGoogle'])->name('google.login');
+        Route::get('auth/google/callback', [AdminGoogleController::class, 'handleGoogleCallback']);
+
         // Authentication
         Route::get('/login', 'showLoginForm')->name('login'); // admin.login
         Route::post('/login', 'login')->name('login.submit'); // admin.login.submit
