@@ -25,7 +25,7 @@ class GoogleController extends Controller
     {
         try {
             $googleUser = Socialite::driver('google')->user();
-            return [$googleUser];
+            // return [$googleUser];
             // 🔍 نبحث عن provider سابق
             $provider = AuthProvider::where('provider_name', 'google')
                 ->where('provider_user_id', $googleUser->getId())
