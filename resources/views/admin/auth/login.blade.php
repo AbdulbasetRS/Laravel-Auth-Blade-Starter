@@ -77,8 +77,11 @@
                         </div>
 
                         {{-- 🔹 زر تسجيل الدخول باستخدام Google --}}
-                        <a href="{{ route('admin.google.login') }}" class="btn btn-outline-danger w-100">
+                        <a href="{{ route('admin.auth.google.redirect') }}" class="btn btn-outline-danger w-100">
                             <i class="bi bi-google me-2"></i> تسجيل الدخول باستخدام Google
+                        </a>
+                        <a href="{{ route('admin.auth.gitHub.redirect') }}" class="btn btn-outline-secondary w-100 mt-1">
+                            <i class="bi bi-gitHub me-2"></i> تسجيل الدخول باستخدام GitHub
                         </a>
 
                         <div class="text-center mt-3">

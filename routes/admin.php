@@ -7,16 +7,18 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Middleware\Authenticate as AppAuthenticate;
 use App\Http\Middleware\EnsureEmailIsVerified;
 use App\Http\Controllers\Auth\GoogleController as AdminGoogleController;
+use App\Http\Controllers\Admin\SocialController;
 
 
 Route::controller(AdminAuthController::class)
     ->prefix('admin')
     ->as('admin.')
     ->group(function () {
-
-        // Google Authentication
-        Route::get('auth/google', [AdminGoogleController::class, 'redirectToGoogle'])->name('google.login');
-        Route::get('auth/google/callback', [AdminGoogleController::class, 'handleGoogleCallback']);
+        
+        Route::get('auth/google/redirect', [SocialController::class, 'googleRedirect'])->name('auth.google.redirect');
+        Route::get('auth/google/callback', [SocialController::class, 'googleCallback'])->name('auth.google.callback');
+        Route::get('auth/gitHub/redirect', [SocialController::class, 'gitHubRedirect'])->name('auth.gitHub.redirect');
+        Route::get('auth/gitHub/callback', [SocialController::class, 'gitHubCallback'])->name('auth.gitHub.callback');
 
         // Authentication
         Route::get('/login', 'showLoginForm')->name('login'); // admin.login

@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
-use App\Models\User;
 use App\Enums\UserStatus;
 use App\Enums\UserType;
+use App\Exceptions\EmailNotVerifiedException;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
+use App\Services\Auth\LoginService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -26,61 +28,89 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $login = $request->identifier;
+        $loginService = new LoginService;
+        $identifier = $request->identifier;
         $password = $request->password;
+        $remember = (bool) $request->remember_me;
 
-        $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email'
-            : (is_numeric($login) ? 'mobile_number' : 'username');
+        try {
 
-        $user = User::where($fieldType, $login)->first();
+            $user = $loginService->attemptCredentialsLogin($identifier, $password, $request, $remember);
 
-        if (!$user) {
-            return back()->withErrors(['login' => 'Invalid login credentials']);
-        }
+            if (! $user) {
+                return back()->withErrors(['login' => 'auth invalid credentials']);
+            }
 
-        if (!$user->can_login) {
-            return back()->withErrors(['login' => 'You are not allowed to login']);
-        }
-
-        // Ensure the user status is Active (enum-safe comparison)
-        if ($user->status !== UserStatus::Active) {
-            return back()->withErrors(['login' => 'Your account is not active']);
-        }
-
-        // Allow only specific user types (strict enum comparison)
-        $allowedTypes = [
-            UserType::User,
-            UserType::Admin,
-            UserType::IT,
-            UserType::Tester,
-            UserType::Employee,
-        ];
-        if (!in_array($user->type, $allowedTypes, true)) {
-            return back()->withErrors(['login' => 'You are not allowed to login']);
-        }
-
-        // Validate credentials without logging in, to check verification state first
-        $credentialsValid = Auth::validate([$fieldType => $login, 'password' => $password]);
-        if ($credentialsValid && is_null($user->email_verified_at)) {
-            // Store for resend usage and redirect to verification notice
-            $request->session()->put('verification_user_id', $user->id);
-            return redirect()->route('admin.verification-notice')->with('error', 'حسابك غير مفعل. رجاءً تحقق من بريدك الإلكتروني لتفعيل الحساب.');
-        }
-
-        if (Auth::attempt([$fieldType => $login, 'password' => $password], $request->remember_me)) {
-            // Regenerate session to prevent fixation
-            $request->session()->regenerate();
-
-            // Redirect to intended URL if present, otherwise fallback to dashboard
             return redirect()->intended(route('admin.dashboard'));
-        }
 
-        return back()->withErrors(['login' => 'Invalid login credentials']);
+        } catch (EmailNotVerifiedException $e) {
+            return redirect()
+                ->route('admin.verification-notice')
+                ->with('error', $e->getMessage());
+        } catch (\Exception $e) {
+
+            return back()->withErrors(['login' => $e->getMessage()]);
+        }
     }
+
+    // public function login(LoginRequest $request)
+    // {
+    //     $login = $request->identifier;
+    //     $password = $request->password;
+
+    //     $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email'
+    //         : (is_numeric($login) ? 'mobile_number' : 'username');
+
+    //     $user = User::where($fieldType, $login)->first();
+
+    //     if (!$user) {
+    //         return back()->withErrors(['login' => 'Invalid login credentials']);
+    //     }
+
+    //     if (!$user->can_login) {
+    //         return back()->withErrors(['login' => 'You are not allowed to login']);
+    //     }
+
+    //     // Ensure the user status is Active (enum-safe comparison)
+    //     if ($user->status !== UserStatus::Active) {
+    //         return back()->withErrors(['login' => 'Your account is not active']);
+    //     }
+
+    //     // Allow only specific user types (strict enum comparison)
+    //     $allowedTypes = [
+    //         UserType::User,
+    //         UserType::Admin,
+    //         UserType::IT,
+    //         UserType::Tester,
+    //         UserType::Employee,
+    //     ];
+    //     if (!in_array($user->type, $allowedTypes, true)) {
+    //         return back()->withErrors(['login' => 'You are not allowed to login']);
+    //     }
+
+    //     // Validate credentials without logging in, to check verification state first
+    //     $credentialsValid = Auth::validate([$fieldType => $login, 'password' => $password]);
+    //     if ($credentialsValid && is_null($user->email_verified_at)) {
+    //         // Store for resend usage and redirect to verification notice
+    //         $request->session()->put('verification_user_id', $user->id);
+    //         return redirect()->route('admin.verification-notice')->with('error', 'حسابك غير مفعل. رجاءً تحقق من بريدك الإلكتروني لتفعيل الحساب.');
+    //     }
+
+    //     if (Auth::attempt([$fieldType => $login, 'password' => $password], $request->remember_me)) {
+    //         // Regenerate session to prevent fixation
+    //         $request->session()->regenerate();
+
+    //         // Redirect to intended URL if present, otherwise fallback to dashboard
+    //         return redirect()->intended(route('admin.dashboard'));
+    //     }
+
+    //     return back()->withErrors(['login' => 'Invalid login credentials']);
+    // }
 
     public function logout()
     {
         Auth::logout();
+
         return redirect()->route('admin.login');
     }
 
@@ -125,7 +155,7 @@ class AuthController extends Controller
             $slug = $baseSlug;
             $counter = 1;
             while (User::where('slug', $slug)->exists()) {
-                $slug = $baseSlug . '-' . $counter++;
+                $slug = $baseSlug.'-'.$counter++;
             }
 
             // Create user
@@ -150,11 +180,13 @@ class AuthController extends Controller
 
             // Store for verification flow and redirect to notice (auto-sends email with throttle)
             $request->session()->put('verification_user_id', $user->id);
+
             return redirect()->route('admin.verification-notice')
                 ->with('status', 'تم إنشاء الحساب بنجاح. قم بالتحقق من بريدك الإلكتروني لتفعيل الحساب.');
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Registration failed', ['error' => $e->getMessage()]);
+
             return back()->with('error', 'تعذر إنشاء الحساب حاليًا. الرجاء المحاولة لاحقًا.')
                 ->withInput($request->except('password', 'password_confirmation'));
         }
@@ -196,7 +228,7 @@ class AuthController extends Controller
         ]);
 
         // 3) Send email with reset link (include plain token and email)
-        $resetUrl = route('admin.reset-password', ['token' => $plainToken]) . '?email=' . urlencode($email);
+        $resetUrl = route('admin.reset-password', ['token' => $plainToken]).'?email='.urlencode($email);
 
         Mail::send('emails.admin.reset-password', ['resetUrl' => $resetUrl, 'email' => $email], function ($message) use ($email) {
             $message->to($email)
@@ -213,6 +245,7 @@ class AuthController extends Controller
     {
         // The email may arrive via query string
         $email = request()->query('email');
+
         return view('admin.auth.reset-password', compact('token', 'email'));
     }
 
@@ -237,7 +270,7 @@ class AuthController extends Controller
 
         // 2) Fetch token record and verify
         $record = DB::table('password_reset_tokens')->where('email', $email)->first();
-        if (!$record) {
+        if (! $record) {
             return back()->withErrors(['email' => 'الرمز غير صالح أو منتهي'])->withInput($request->except('password', 'password_confirmation'));
         }
 
@@ -246,16 +279,17 @@ class AuthController extends Controller
         if (now()->greaterThan($expiresAt)) {
             // Cleanup expired token
             DB::table('password_reset_tokens')->where('email', $email)->delete();
+
             return back()->withErrors(['email' => 'انتهت صلاحية رابط إعادة التعيين، الرجاء المحاولة مجددًا'])->withInput($request->except('password', 'password_confirmation'));
         }
 
-        if (!Hash::check($plainToken, $record->token)) {
+        if (! Hash::check($plainToken, $record->token)) {
             return back()->withErrors(['email' => 'الرمز غير صالح'])->withInput($request->except('password', 'password_confirmation'));
         }
 
         // 3) Update user password
         $user = User::where('email', $email)->first();
-        if (!$user) {
+        if (! $user) {
             return back()->withErrors(['email' => 'المستخدم غير موجود'])->withInput($request->except('password', 'password_confirmation'));
         }
 
@@ -279,14 +313,14 @@ class AuthController extends Controller
         if ($request->session()->has('verification_user_id')) {
             $user = User::find($request->session()->get('verification_user_id'));
         }
-        if (!$user && Auth::check()) {
+        if (! $user && Auth::check()) {
             $user = Auth::user();
         }
 
         // Auto-send verification email with cooldown when landing on this page
         if ($user && is_null($user->email_verified_at)) {
-            $key = 'verify_resend_user_' . $user->id;
-            if (!Cache::has($key)) {
+            $key = 'verify_resend_user_'.$user->id;
+            if (! Cache::has($key)) {
                 Cache::put($key, true, now()->addSeconds(60));
 
                 $url = URL::temporarySignedRoute(
@@ -316,17 +350,17 @@ class AuthController extends Controller
     public function verificationVerify(Request $request, $id, $hash)
     {
         // Validate signature and expiry
-        if (!URL::hasValidSignature($request)) {
+        if (! URL::hasValidSignature($request)) {
             return redirect()->route('admin.verification-notice')->with('error', 'رابط التحقق غير صالح أو منتهي');
         }
 
         $user = User::find($id);
-        if (!$user) {
+        if (! $user) {
             return redirect()->route('admin.verification-notice')->with('error', 'المستخدم غير موجود');
         }
 
         // Confirm hash matches email
-        if (!hash_equals((string) $hash, sha1($user->email))) {
+        if (! hash_equals((string) $hash, sha1($user->email))) {
             return redirect()->route('admin.verification-notice')->with('error', 'رابط التحقق غير صالح');
         }
 
@@ -348,19 +382,19 @@ class AuthController extends Controller
         if ($request->session()->has('verification_user_id')) {
             $user = User::find($request->session()->get('verification_user_id'));
         }
-        if (!$user && Auth::check()) {
+        if (! $user && Auth::check()) {
             $user = Auth::user();
         }
-        if (!$user) {
+        if (! $user) {
             return back()->with('error', 'لا يوجد مستخدم لإعادة إرسال التحقق له');
         }
 
-        if (!is_null($user->email_verified_at)) {
+        if (! is_null($user->email_verified_at)) {
             return redirect()->route('admin.dashboard');
         }
 
         // Throttle: allow once per 60 seconds per user
-        $key = 'verify_resend_user_' . $user->id;
+        $key = 'verify_resend_user_'.$user->id;
         if (Cache::has($key)) {
             return back()->with('status', 'تم إرسال رسالة التحقق مؤخرًا. يمكنك طلب إعادة الإرسال بعد دقيقة.');
         }
@@ -380,9 +414,11 @@ class AuthController extends Controller
                 $message->to($user->email)
                     ->subject(__('Email Verification'));
             });
+
             return back()->with('status', 'تم إرسال رسالة التحقق إلى بريدك الإلكتروني');
         } catch (\Throwable $e) {
             Log::error('Failed to send verification email (manual resend)', ['user_id' => $user->id, 'error' => $e->getMessage()]);
+
             return back()->with('error', 'تعذر إرسال رسالة التحقق حاليًا. الرجاء المحاولة لاحقًا.');
         }
     }
