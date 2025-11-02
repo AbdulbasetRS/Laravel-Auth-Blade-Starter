@@ -17,6 +17,10 @@ class GoogleAuthService
     {
         return Socialite::driver('google')
             // ->scopes(['https://www.googleapis.com/auth/drive.file', 'email', 'profile'])
+            ->with([
+                'access_type' => 'offline',
+                'prompt' => 'consent select_account',
+            ])
             ->redirect();
     }
 
