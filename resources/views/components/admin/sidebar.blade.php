@@ -91,7 +91,7 @@
 
                 <!-- Link after list -->
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="#">
+                    <a class="nav-link d-flex align-items-center" href="{{ route('admin.settings.index') }}">
                         <i class="fa-solid fa-gear me-2"></i>
                         <span>الإعدادات</span>
                     </a>

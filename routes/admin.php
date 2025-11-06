@@ -61,6 +61,10 @@ Route::prefix('admin')
         Route::resource('users', UserController::class)
             ->parameters(['users' => 'user:slug'])
             ->names('users');
+
+        // Settings page (show + save)
+        Route::get('settings', [\App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');
+        Route::post('settings', [\App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
     });
 
 
