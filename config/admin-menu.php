@@ -32,8 +32,8 @@ return [
     ],
     [
         'order' => 3,
-        'title' => 'Settings',
+        'title' => 'User Settings',
         'icon' => 'fa-solid fa-gear',
-        'route' => 'admin.settings.index',
+        // 'route' => '',
     ],
 ];

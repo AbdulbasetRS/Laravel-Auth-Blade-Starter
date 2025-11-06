@@ -1,20 +1,17 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
-use App\Http\Controllers\Admin\VerificationController as AdminVerificationController;
+use App\Http\Controllers\Admin\SocialController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Middleware\Authenticate as AppAuthenticate;
 use App\Http\Middleware\EnsureEmailIsVerified;
-use App\Http\Controllers\Auth\GoogleController as AdminGoogleController;
-use App\Http\Controllers\Admin\SocialController;
-
+use Illuminate\Support\Facades\Route;
 
 Route::controller(AdminAuthController::class)
     ->prefix('admin')
     ->as('admin.')
     ->group(function () {
-        
+
         Route::get('auth/google/redirect', [SocialController::class, 'googleRedirect'])->name('auth.google.redirect');
         Route::get('auth/google/callback', [SocialController::class, 'googleCallback'])->name('auth.google.callback');
         Route::get('auth/gitHub/redirect', [SocialController::class, 'gitHubRedirect'])->name('auth.gitHub.redirect');
@@ -40,7 +37,6 @@ Route::controller(AdminAuthController::class)
         Route::post('/verification-notification', 'sendVerificationNotification')->name('verification-notification.submit'); // admin.verification-notification.submit
     });
 
-
 Route::prefix('admin')
     ->as('admin.')
     ->middleware([AppAuthenticate::class, EnsureEmailIsVerified::class])
@@ -62,11 +58,18 @@ Route::prefix('admin')
             ->parameters(['users' => 'user:slug'])
             ->names('users');
 
-        // Settings page (show + save)
-        Route::get('settings', [\App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');
-        Route::post('settings', [\App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
-    });
+        Route::prefix('user-settings')
+            ->as('user-settings.')
+            ->group(function () {
+                //
+            });
 
+        Route::prefix('app-settings')
+            ->as('app-settings.')
+            ->group(function () {
+                //
+            });
+    });
 
 // Admin fallback (must be last): any unmatched /admin/* goes to admin 404
 Route::prefix('admin')->group(function () {
