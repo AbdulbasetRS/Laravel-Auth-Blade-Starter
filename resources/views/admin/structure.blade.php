@@ -31,16 +31,19 @@
     <div class="d-flex flex-column min-vh-100">
 
         @auth
-            @include('components.admin.sidebar')
+            {{-- @include('components.admin.sidebar') --}}
             {{-- @include('components.admin.navbar') --}}
+            <x-admin.sidebar />
+            {{-- <x-admin.navbar /> --}}
+
         @endauth
 
         <main class="flex-grow-1">
             @yield('content')
         </main>
 
-        @include('components.admin.footer')
-
+        {{-- @include('components.admin.footer') --}}
+        <x-admin.footer />
     </div>
 
     <!-- Site Scripts -->

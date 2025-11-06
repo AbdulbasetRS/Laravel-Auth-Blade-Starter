@@ -57,57 +57,47 @@
 
             <!-- Sidebar Menu -->
             <ul class="nav flex-column p-3">
+                @isset($menu)
+                    @foreach ($menu as $index => $item)
+                        @php
+                            $collapseId = 'menuItem_' . $index;
+                        @endphp
 
-                <!-- Link before list -->
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('admin.dashboard') }}">
-                        <i class="fa-solid fa-house me-2"></i>
-                        <span>الرئيسية</span>
-                    </a>
-                </li>
+                        <li class="nav-item">
 
-                <!-- Users Management -->
-                <li class="nav-item">
-                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
-                        href="#userMenu" role="button" aria-expanded="false" aria-controls="userMenu">
-                        <span><i class="fa-solid fa-users me-2"></i>إدارة المستخدمين</span>
-                        <i class="fa-solid fa-chevron-down collapse-arrow"></i>
-                    </a>
-                    <div class="collapse" id="userMenu">
-                        <ul class="nav flex-column submenu-indent">
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.users.index') }}">
-                                    <i class="fa-solid fa-users me-2"></i> كل المستخدمين
+                            {{-- لو مفيش children → لينك عادي --}}
+                            @if(empty($item['children']))
+                                <a class="nav-link d-flex align-items-center {{ $item['active'] ? 'active-menu' : '' }}"
+                                    href="{{ isset($item['route']) ? route($item['route']) : '#' }}">
+                                    <i class="{{ $item['icon'] }} me-2"></i> {{ $item['title'] }}
                                 </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.users.create') }}">
-                                    <i class="fa-solid fa-user-plus me-2"></i> إضافة مستخدم
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+                            @else
+                                {{-- لو في children → collapsible --}}
+                                <a class="nav-link d-flex justify-content-between align-items-center"
+                                    data-bs-toggle="collapse" href="#{{ $collapseId }}" role="button"
+                                    aria-expanded="{{ $item['active'] ? 'true' : 'false' }}" aria-controls="{{ $collapseId }}">
 
-                <!-- Link after list -->
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('admin.settings.index') }}">
-                        <i class="fa-solid fa-gear me-2"></i>
-                        <span>الإعدادات</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="#">
-                        <i class="fa-solid fa-gear me-2"></i>
-                        <span>Upload to Google Drive </span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="#">
-                        <i class="fa-solid fa-gear me-2"></i>
-                        <span>List Files From Google Drive </span>
-                    </a>
-                </li>
+                                    <span><i class="{{ $item['icon'] }} me-2"></i>{{ $item['title'] }}</span>
+                                    <i class="fa-solid fa-chevron-down collapse-arrow"></i>
+                                </a>
+
+                                <div class="collapse {{ $item['active'] ? 'show' : '' }}" id="{{ $collapseId }}">
+                                    <ul class="nav flex-column submenu-indent">
+                                        @foreach ($item['children'] as $child)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $child['active'] ? 'active-submenu' : '' }}"
+                                                    href="{{ route($child['route']) }}">
+                                                    <i class="{{ $child['icon'] }} me-2"></i> {{ $child['title'] }}
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
+                        </li>
+                    @endforeach
+                @endisset
             </ul>
 
             <!-- Logout Section -->
@@ -194,6 +184,58 @@
         /* RTL */
         [dir="rtl"] .submenu-indent {
             margin-left: 0;
+        }
+
+
+        /* 🔵 Active Parent Menu Style */
+        /* 
+                                .active-menu {
+                                    background-color: #0d6efd !important;
+                                    color: #000000 !important;
+                                    border-radius: 6px; 
+                                }
+
+                                .active-menu i {
+                                    color: #000000 !important;
+                                }
+
+                                .active-submenu {
+                                    color: #0d6efd !important;
+                                    font-weight: 600;
+                                }
+
+                                .active-submenu i {
+                                    color: #000000 !important;
+                                }
+
+                                body.theme-dark .active-menu {
+                                    background-color: #1e88e5 !important;
+                                    color: #0984e3 !important;
+                                    font-weight: bolder;
+                                }
+
+                                body.theme-dark .active-submenu {
+                                    color: #0984e3 !important;
+                                    font-weight: bolder;
+                                } 
+                            */
+
+        .active-menu,
+        .active-submenu {
+            color: red !important;
+            font-weight: bolder !important;
+        }
+
+        .active-submenu::before {
+            content: "→ ";
+            color: #d63031;
+            font-weight: bold;
+        }
+
+        .active-menu::before {
+            content: "→ ";
+            color: #d63031;
+            font-weight: bold;
         }
     </style>
 @endauth

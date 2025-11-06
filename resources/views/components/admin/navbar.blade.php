@@ -31,7 +31,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
                             <li>
-                                <a class="dropdown-item" href="{{ route('admin.users.show', ['id' => auth()->id()]) }}">
+                                <a class="dropdown-item" href="{{ route('admin.users.show', auth()->id()) }}">
                                     <i class="fa-regular fa-id-badge me-2"></i> الملف الشخصي
                                 </a>
                             </li>

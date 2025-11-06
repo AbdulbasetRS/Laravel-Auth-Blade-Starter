@@ -2,18 +2,21 @@
 
 namespace App\View\Components\Admin;
 
+use App\Services\AdminMenuService;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 class Sidebar extends Component
 {
+    public $menu;
+
     /**
      * Create a new component instance.
      */
     public function __construct()
     {
-        //
+        $this->menu = AdminMenuService::all();
     }
 
     /**
