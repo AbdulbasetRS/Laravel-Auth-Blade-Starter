@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\SocialController;
+use App\Http\Controllers\Admin\TwoFactorController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Middleware\Authenticate as AppAuthenticate;
 use App\Http\Middleware\EnsureEmailIsVerified;
@@ -37,6 +38,15 @@ Route::controller(AdminAuthController::class)
         Route::post('/verification-notification', 'sendVerificationNotification')->name('verification-notification.submit'); // admin.verification-notification.submit
     });
 
+// Two-Factor Authentication (Guest - Login Verification)
+Route::controller(TwoFactorController::class)
+    ->prefix('admin/two-factor')
+    ->as('admin.two-factor.')
+    ->group(function () {
+        Route::get('/verify', 'showVerify')->name('verify'); // admin.two-factor.verify
+        Route::post('/verify', 'verifyLogin')->name('verify.login'); // admin.two-factor.verify.login
+    });
+
 Route::prefix('admin')
     ->as('admin.')
     ->middleware([AppAuthenticate::class, EnsureEmailIsVerified::class])
@@ -58,10 +68,22 @@ Route::prefix('admin')
             ->parameters(['users' => 'user:slug'])
             ->names('users');
 
+        // Two-Factor Authentication Settings
+        Route::controller(TwoFactorController::class)
+            ->prefix('two-factor')
+            ->as('two-factor.')
+            ->group(function () {
+                Route::post('/confirm', 'verify')->name('confirm'); // admin.two-factor.confirm (for enabling)
+            });
+            
         Route::prefix('user-settings')
             ->as('user-settings.')
             ->group(function () {
-                //
+                Route::get('two-factor/enable', [TwoFactorController::class,'enable'])->name('two-factor.enable'); // admin.user-settings.two-factor.enable
+                Route::post('two-factor/disable', [TwoFactorController::class,'disable'])->name('two-factor.disable'); // admin.user-settings.two-factor.disable
+                Route::get('two-factor/', [TwoFactorController::class,'index'])->name('two-factor.index'); // admin.user-settings.two-factor.index
+                Route::post('two-factor/regenerate', [TwoFactorController::class, 'regenerate'])->name('two-factor.regenerate');
+
             });
 
         Route::prefix('app-settings')

@@ -37,6 +37,11 @@ class AuthController extends Controller
 
             $user = $loginService->attemptCredentialsLogin($identifier, $password, $request, $remember);
 
+            // Check if 2FA verification is required
+            if (! $user && $request->session()->has('2fa:user:id')) {
+                return redirect()->route('admin.two-factor.verify');
+            }
+
             if (! $user) {
                 return back()->withErrors(['login' => 'auth invalid credentials']);
             }

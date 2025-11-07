@@ -65,4 +65,17 @@ class User extends Authenticatable
     {
         return $this->hasMany(AuthProvider::class, 'user_id', 'id');
     }
+
+    public function userSettings()
+    {
+        return $this->hasOne(UserSettings::class, 'user_id', 'id');
+    }
+
+    public function hasTwoFactorEnabled(): bool
+    {
+        return $this->userSettings
+            && $this->userSettings->enable_two_factor
+            && !empty($this->userSettings->google2fa_secret);
+    }
+
 }

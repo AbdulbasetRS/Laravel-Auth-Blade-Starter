@@ -237,5 +237,12 @@
             color: #d63031;
             font-weight: bold;
         }
+
+        [dir="rtl"] .active-submenu::before {
+            content: " ←" !important;
+        }
+        [dir="rtl"] .active-menu::before {
+            content: " ←" !important;
+        }
     </style>
 @endauth

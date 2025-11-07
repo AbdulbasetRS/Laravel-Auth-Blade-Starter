@@ -35,5 +35,14 @@ return [
         'title' => 'User Settings',
         'icon' => 'fa-solid fa-gear',
         // 'route' => '',
+        'children' => [
+            [
+                'order' => 1,
+                'title' => 'Two Factor',
+                'icon' => 'fa-solid fa-users',
+                'route' => 'admin.user-settings.two-factor.index',
+                // 'permission' => 'view_two_factor',
+            ],
+        ],
     ],
 ];
