@@ -18,7 +18,7 @@
     <!-- Site Stylesheet -->
     <link rel="stylesheet" href="{{ asset('assets/libraries/bootstrap/bootstrap-v5.3.8/dist/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/libraries/sweetAlert2/v11.17.2/sweetalert2.min.css') }}">
-  
+
     <!-- DataTables -->
     <link rel="stylesheet" href="{{ asset('assets/libraries/dataTables/datatables.bundle.css') }}">
     <script src="{{ asset('assets/libraries/dataTables/datatables.bundle.js') }}"></script>
@@ -28,6 +28,10 @@
 </head>
 
 <body class="font-default" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
+    
+    <!-- Toast container -->
+    <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
     <div class="d-flex flex-column min-vh-100">
 
         @auth
