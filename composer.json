@@ -17,6 +17,7 @@
         "laravel/tinker": "^2.10.1",
         "mcamara/laravel-localization": "^2.3",
         "pragmarx/google2fa": "^9.0",
+        "pusher/pusher-php-server": "^7.2",
         "yajra/laravel-datatables-oracle": "12"
     },
     "require-dev": {
