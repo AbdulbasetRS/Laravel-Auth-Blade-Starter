@@ -2,7 +2,9 @@
 
 namespace App\Observers;
 
+use App\Http\Resources\Admin\UserResource;
 use App\Models\User;
+use Auth;
 use Illuminate\Support\Str;
 
 class UserObserver
@@ -10,6 +12,7 @@ class UserObserver
     public function creating(User $user)
     {
         $user->slug = Str::slug($user->username) . '-' . Str::random(6);
+        $user->created_by = Auth::id();
     }
 
     /**
@@ -17,7 +20,8 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        //
+        $userResource = new UserResource($user);
+        event(new \App\Events\NewUserRegistered( $userResource));
     }
 
     /**

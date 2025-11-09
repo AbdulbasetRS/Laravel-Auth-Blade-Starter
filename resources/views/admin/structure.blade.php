@@ -28,7 +28,7 @@
 </head>
 
 <body class="font-default" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
-    
+
     <!-- Toast container -->
     <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
 
@@ -56,6 +56,41 @@
     <script src="{{ asset('assets/libraries/sweetAlert2/v11.17.2/sweetalert2.min.js') }}"></script>
     @yield('main.script')
     <script src="{{ asset('assets/js/app.js') }}"></script>
+
+    @auth
+        <!-- In your Blade file (e.g., resources/views/layouts/app.blade.php) -->
+        <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+
+        <script>
+            // تفعيل الديبج فى اللوكال
+            Pusher.logToConsole = false;
+
+            // initialise Pusher
+            var pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
+                cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
+            });
+
+            // subscribe to channel
+            @if (auth()->user()->isAdmin())
+                var channel = pusher.subscribe('admins-channel');
+
+                // listen to event
+                channel.bind('new-user-registered', function (data) {
+                    if (data.user.created_by !== {{ auth()->id() }}) {
+                        // alert("مستخدم جديد سجل: " + data.user.username);
+                        showAndAddNotification(
+                            'fa-user-plus text-primary',
+                            'مستخدم جديد',
+                            data.user.username,
+                            data.user.created_at,
+                            "{{ route('admin.users.show', ':slug') }}".replace(':slug', data.user.slug),
+                            5000
+                        );
+                    }
+                });
+            @endif
+        </script>
+    @endauth
 </body>
 
 </html>

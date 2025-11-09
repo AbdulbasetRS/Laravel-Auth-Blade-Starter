@@ -119,8 +119,6 @@ class AuthController extends Controller
         return redirect()->route('admin.login');
     }
 
-    /* ========================================================================== */
-
     // Register
     public function showRegisterForm()
     {
@@ -197,8 +195,6 @@ class AuthController extends Controller
         }
     }
 
-    /* ========================================================================== */
-
     // Password Reset
     public function showForgotPasswordForm()
     {
@@ -242,8 +238,6 @@ class AuthController extends Controller
 
         return back()->with('status', 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني');
     }
-
-    /* ========================================================================== */
 
     // Reset Password
     public function showResetPasswordForm(string $token)
@@ -307,8 +301,6 @@ class AuthController extends Controller
         // 5) Redirect to login with status
         return redirect()->route('admin.login')->with('status', 'تم تحديث كلمة المرور بنجاح، يمكنك تسجيل الدخول الآن');
     }
-
-    /* ========================================================================== */
 
     // Email Verification
     public function verificationNotice(Request $request)
@@ -427,8 +419,6 @@ class AuthController extends Controller
             return back()->with('error', 'تعذر إرسال رسالة التحقق حاليًا. الرجاء المحاولة لاحقًا.');
         }
     }
-
-    /* ========================================================================== */
 
     public function dashboard()
     {
