@@ -29,4 +29,10 @@ class NewUserRegistered implements ShouldBroadcast
     {
         return 'new-user-registered';
     }
+
+    public function broadcastWhen(): bool
+    {
+        return config('broadcasting.enabled')
+        && config('broadcasting.connections.pusher.enabled');
+    }
 }
