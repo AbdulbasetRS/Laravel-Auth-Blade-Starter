@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources\Admin;
 
+use App\Helpers\DateHelper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Carbon\Carbon;
 
 class UserResource extends JsonResource
 {
@@ -24,9 +24,9 @@ class UserResource extends JsonResource
         $data['authProviders'] = $this->whenLoaded('authProviders', function () {
             return AuthProviderResource::collection($this->authProviders);
         });
-        
-        $data['created_at'] = Carbon::parse($this->created_at)->format('Y-m-d H:i:s');
-        $data['updated_at'] = Carbon::parse($this->updated_at)->format('Y-m-d H:i:s');
+
+        $data['created_at'] = DateHelper::convertAndFormat($this->created_at, 'Africa/Cairo', 'Y-m-d H:i:s');
+        $data['updated_at'] = DateHelper::convertAndFormat($this->updated_at, 'Africa/Cairo', 'Y-m-d H:i:s');
 
         return $data;
     }
