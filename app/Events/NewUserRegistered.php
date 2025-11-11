@@ -33,6 +33,7 @@ class NewUserRegistered implements ShouldBroadcast
     public function broadcastWhen(): bool
     {
         return config('broadcasting.enabled')
-        && config('broadcasting.connections.pusher.enabled');
+        && config('broadcasting.connections.pusher.enabled')
+        && config('services.notifications_enabled');
     }
 }

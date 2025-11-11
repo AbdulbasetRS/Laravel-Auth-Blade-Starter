@@ -44,4 +44,6 @@ return [
         'client_secret' => env('GITHUB_CLIENT_SECRET'),
         'redirect' => env('GITHUB_REDIRECT_URI'),
     ],
+
+    'notifications_enabled' => env('NOTIFICATIONS_ENABLED', false),
 ];

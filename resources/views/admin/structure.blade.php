@@ -29,8 +29,6 @@
 
 <body class="font-default" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 
-    <!-- Toast container -->
-    <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
 
     <div class="d-flex flex-column min-vh-100">
 
