@@ -61,7 +61,7 @@
 
         <script>
             // تفعيل الديبج فى اللوكال
-            Pusher.logToConsole = false;
+            Pusher.logToConsole = {{ app()->environment('local') ? 'true' : 'false' }};
 
             // initialise Pusher
             var pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
