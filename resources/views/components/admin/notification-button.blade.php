@@ -123,11 +123,11 @@
 
 
 <!-- Notifications Component -->
-<div class="notifications-wrapper">
+<div class="notifications-wrapper" data-per-page="5">
     <div class="dropdown w-100 text-center text-lg-start">
         <button class="btn position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="fas fa-bell"></i>
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary"
                 style="top: 2px !important;left: 75% !important;">
                 0
             </span>
@@ -138,55 +138,15 @@
                 <h6 class="mb-0">الإشعارات</h6>
                 <button type="button" class="btn-close" data-bs-dismiss="dropdown" aria-label="Close"></button>
             </div>
-            <div class="notifications-list">
-                {{-- <!-- Notification Item -->
-                <a href="#" class="dropdown-item p-3 border-bottom">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-user-plus text-primary me-3"></i>
-                        <div>
-                            <p class="mb-0 fw-bold">مستخدم جديد</p>
-                            <small class="text-muted">تم تسجيل حساب جديد</small>
-                            <br>
-                            <small class="text-muted">منذ 5 دقائق</small>
-                        </div>
-                    </div>
-                </a>
-                <!-- Order Notification -->
-                <a href="#" class="dropdown-item p-3 border-bottom">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-shopping-cart text-success me-3"></i>
-                        <div>
-                            <p class="mb-0 fw-bold">طلب جديد #123</p>
-                            <small class="text-muted">تم استلام طلب جديد</small>
-                            <br>
-                            <small class="text-muted">منذ 10 دقائق</small>
-                        </div>
-                    </div>
-                </a>
-                <!-- System Notification -->
-                <a href="#" class="dropdown-item p-3 border-bottom">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-cog text-warning me-3"></i>
-                        <div>
-                            <p class="mb-0 fw-bold">تحديث النظام</p>
-                            <small class="text-muted">تم تحديث النظام بنجاح</small>
-                            <br>
-                            <small class="text-muted">منذ 15 دقيقة</small>
-                        </div>
-                    </div>
-                </a>
-                <!-- More notifications... -->
-                <a href="#" class="dropdown-item p-3 border-bottom">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-exclamation-circle text-danger me-3"></i>
-                        <div>
-                            <p class="mb-0 fw-bold">تنبيه أمني</p>
-                            <small class="text-muted">محاولة تسجيل دخول غير ناجحة</small>
-                            <br>
-                            <small class="text-muted">منذ 20 دقيقة</small>
-                        </div>
-                    </div>
-                </a> --}}
+            <div class="notifications-list"
+                style="min-height:80px; max-height:400px; overflow:auto; position:relative;">
+                <!-- items will be appended here -->
+                {{-- <div class="notifications-loader text-center py-2 d-none">
+                    <div class="spinner-border spinner-border-sm" role="status"><span
+                            class="visually-hidden">Loading...</span></div>
+                </div> --}}
+                <div class="notifications-loader text-center p-2 d-none">جاري التحميل...</div>
+
             </div>
 
             <div class="p-2 border-top text-center">
@@ -205,6 +165,13 @@
      * @param {string} time - الوقت (مثلاً "منذ 5 دقائق")
      * @param {string} link - الرابط (اختياري)
      */
+    function updateBadgeVariant(badgeEl) {
+        if (!badgeEl) return;
+        const n = parseInt(badgeEl.textContent.trim()) || 0;
+        badgeEl.classList.remove('bg-danger', 'bg-secondary');
+        badgeEl.classList.add(n > 0 ? 'bg-danger' : 'bg-secondary');
+    }
+
     function addNotification(iconClass, title, message, time = 'الآن', link = '#') {
         const list = document.querySelector('.notifications-list');
         const badge = document.querySelector('.notifications-wrapper .badge');
@@ -233,6 +200,7 @@
         // 🔸 تحديث العداد
         const currentCount = parseInt(badge.textContent.trim()) || 0;
         badge.textContent = currentCount + 1;
+        updateBadgeVariant(badge);
 
         // 🔸 تأثير لطيف على العداد
         badge.classList.add('animate__animated', 'animate__heartBeat');
@@ -328,4 +296,181 @@
     //     '#',
     //     5000
     // );
+
+
+    (function () {
+        const wrapper = document.querySelector('.notifications-wrapper');
+        if (!wrapper) return;
+
+        const perPage = parseInt(wrapper.dataset.perPage || 5, 10);
+        let currentPage = 1;
+        let loading = false;
+        let lastPage = false;
+
+        const list = wrapper.querySelector('.notifications-list');
+        const loader = list.querySelector('.notifications-loader');
+        const badge = wrapper.querySelector('.badge');
+
+        function showLoader(show) {
+            if (!loader) return;
+            loader.classList.toggle('d-none', !show);
+        }
+
+        function emptyPlaceholder() {
+            const existing = list.querySelector('.no-notifications');
+            if (existing) return existing;
+            const el = document.createElement('div');
+            el.className = 'no-notifications text-center text-muted p-3';
+            el.innerText = 'لا توجد إشعارات';
+            return el;
+        }
+
+        function renderNotificationItem(n) {
+            // support both shapes: n may be notification object or data-only
+            const id = n.id || null;
+            const createdAt = n.created_at || n.createdAt || (n.data?.created_at ?? null);
+
+            // payload inside `data` (DB notifications)
+            const payload = n.data && typeof n.data === 'object' ? n.data : (n.payload || n);
+
+            const title = payload.title || payload.title_ar || 'إشعار جديد';
+            const body = payload.body || payload.message || JSON.stringify(payload);
+            const time = createdAt ? new Date(createdAt).toLocaleString() : 'الآن';
+            const iconClass = payload.icon || 'fa-user-plus text-primary';
+            // try to link to user by id if provided (best-effort)
+            const userId = payload.user_id || payload.user?.id || payload.user_id;
+            const slug = payload.slug || payload.user?.slug || payload.slug;
+            const link = slug ? `/admin/users/${slug}` : (payload.link || '#');
+
+            const item = document.createElement('a');
+            item.href = link;
+            item.dataset.notificationId = id ?? '';
+            item.className = 'dropdown-item p-3 border-bottom';
+            item.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas ${iconClass} me-3" style="min-width:28px;text-align:center;"></i>
+                    <div class="flex-fill">
+                        <p class="mb-1 fw-bold">${title}</p>
+                        <small class="text-muted d-block text-truncate" style="max-width:220px;">${escapeHtml(body)}</small>
+                        <small class="text-muted">${escapeHtml(time)}</small>
+                    </div>
+                </div>
+            `;
+            return item;
+        }
+
+        // simple escaping to avoid raw HTML from payloads
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+
+        async function fetchNotifications(page = 1) {
+            if (loading || lastPage) return;
+            loading = true;
+            showLoader(true);
+            try {
+                const url = `/admin/notifications?page=${page}&per_page=${perPage}`;
+                const res = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                if (!res.ok) throw new Error('Failed to fetch notifications');
+
+                const data = await res.json();
+
+                // support two shapes:
+                // 1) paginator: { data: [...], total, next_page_url, current_page }
+                // 2) plain array: [...]
+                let items = [];
+                let total = null;
+                let nextPageUrl = null;
+                if (Array.isArray(data)) {
+                    items = data;
+                    total = data.length;
+                    nextPageUrl = null;
+                } else if (data && Array.isArray(data.data)) {
+                    items = data.data;
+                    total = data.total ?? (data.data.length);
+                    nextPageUrl = data.next_page_url ?? null;
+                } else {
+                    // fallback: if response wrapped directly as object list
+                    items = data.items || [];
+                    total = items.length;
+                    nextPageUrl = data.next_page_url ?? null;
+                }
+
+                // first page: clear existing items and show placeholder if none
+                if (page === 1) {
+                    // remove existing items (except loader)
+                    list.querySelectorAll('.dropdown-item, .no-notifications').forEach(el => el.remove());
+                    if (!items.length) {
+                        list.insertBefore(emptyPlaceholder(), loader);
+                    }
+                }
+
+                // insert items (newest first). Items are expected sorted desc by API.
+                items.forEach(n => {
+                    const el = renderNotificationItem(n);
+                    // insert before loader so newest appear on top
+                    list.insertBefore(el, loader);
+                });
+
+                // update badge: prefer unread total if available, otherwise total
+                if (total !== null) {
+                    badge.textContent = total;
+                } else {
+                    // fallback to count of rendered notifications
+                    const cnt = list.querySelectorAll('.dropdown-item').length;
+                    badge.textContent = cnt;
+                }
+                updateBadgeVariant(badge);
+
+                // determine if there are more pages
+                if (!nextPageUrl && items.length < perPage) {
+                    lastPage = true;
+                } else {
+                    lastPage = !nextPageUrl;
+                    if (!lastPage) currentPage = page;
+                }
+            } catch (e) {
+                console.error('Notifications load error:', e);
+            } finally {
+                loading = false;
+                showLoader(false);
+            }
+        }
+
+        // Infinite scroll handler
+        function onScroll() {
+            if (loading || lastPage) return;
+            const threshold = 60; // px from bottom
+            if (list.scrollTop + list.clientHeight >= list.scrollHeight - threshold) {
+                fetchNotifications(currentPage + 1);
+            }
+        }
+
+        // init on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            updateBadgeVariant(wrapper.querySelector('.badge'));
+            fetchNotifications(1);
+        });
+
+        // attach scroll and dropdown behavior
+        const dropdownButton = wrapper.querySelector('[data-bs-toggle="dropdown"]');
+        if (list) {
+            list.addEventListener('scroll', onScroll);
+        }
+        if (dropdownButton && list) {
+            dropdownButton.addEventListener('click', () => {
+                // if empty (only loader or placeholder), load first page
+                const hasItems = list.querySelectorAll('.dropdown-item').length > 0;
+                if (!hasItems) {
+                    fetchNotifications(1);
+                }
+            });
+        }
+    }());
 </script>

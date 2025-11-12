@@ -28,9 +28,10 @@ class NewUserRegisteredNotification extends Notification implements ShouldQueue
     public function toDatabase($notifiable)
     {
         return [
-            'title' => 'مستخدم جديد تم تسجيله 👤',
+            'title' => 'مستخدم جديد تم تسجيله',
             'body' => 'المستخدم '.$this->user->username.' انضم للنظام.',
             'user_id' => $this->user->id,
+            'slug' => $this->user->slug,
         ];
     }
 
@@ -38,30 +39,4 @@ class NewUserRegisteredNotification extends Notification implements ShouldQueue
     {
         return config('services.notifications_enabled');
     }
-
-    // // البيانات اللي تتبعت على الـ Pusher (Real-time)
-    // public function toBroadcast($notifiable)
-    // {
-    //     return new BroadcastMessage([
-    //         'user' => [
-    //             'title' => 'مستخدم جديد تم تسجيله 👤',
-    //             'body' => 'المستخدم '.$this->user->username.' انضم للنظام.',
-    //             'user_id' => $this->user->id,
-    //             'created_by' => $this->user->created_by,
-    //             'username' => $this->user->username,
-    //             'slug' => $this->user->slug,
-    //         ],
-    //     ]);
-    // }
-
-    // // اسم القناة اللي هيتم البث عليها
-    // public function broadcastOn()
-    // {
-    //     return ['admins-channel']; // نفس القناة اللى كنت بتستخدمها
-    // }
-
-    // public function broadcastAs()
-    // {
-    //     return 'new-user-registered';
-    // }
 }
