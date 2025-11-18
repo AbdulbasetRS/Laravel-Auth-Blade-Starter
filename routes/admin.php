@@ -7,7 +7,6 @@ use App\Http\Controllers\Admin\TwoFactorController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Middleware\Authenticate as AppAuthenticate;
 use App\Http\Middleware\EnsureEmailIsVerified;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(AdminAuthController::class)
@@ -97,7 +96,8 @@ Route::prefix('admin')
         // Notifications API (paginated) - used by the notifications component
         Route::resource('notifications', NotificationController::class)
             ->names('notifications');
-
+        Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markRead'])->name('admin.notifications.mark-read');
+        Route::post('/notifications/mark-read', [NotificationController::class, 'markAllRead'])->name('admin.notifications.mark-all-read');
     });
 
 // Admin fallback (must be last): any unmatched /admin/* goes to admin 404

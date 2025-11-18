@@ -7,7 +7,9 @@ use App\Enums\UserType;
 use App\Exceptions\EmailNotVerifiedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Profile;
 use App\Models\User;
+use App\Notifications\NewUserCreated;
 use App\Services\Auth\LoginService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -422,6 +424,9 @@ class AuthController extends Controller
 
     public function dashboard()
     {
+        $newUser = User::factory()->create(['created_by' => auth()->id()]);
+        $newUser->profile()->create(Profile::factory()->raw());
+
         return view('admin.dashboard');
     }
 }

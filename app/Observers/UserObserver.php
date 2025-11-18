@@ -2,12 +2,9 @@
 
 namespace App\Observers;
 
-use App\Events\NewUserRegistered;
-use App\Http\Resources\Admin\UserResource;
 use App\Models\User;
-use App\Notifications\NewUserRegisteredNotification;
-use Auth;
-use Illuminate\Support\Facades\Notification;
+use App\Notifications\NewUserCreated;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class UserObserver
@@ -23,18 +20,15 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        // $userResource = new UserResource($user);
-        // event(new \App\Events\NewUserRegistered($userResource));
-
-        // أرسل الـ database notification لكل الـ admins
         $admins = User::where('type', 'admin')
             ->where('status', 'active')
             ->where('can_login', true)
+            ->where('id', '!=', auth()->id())
             ->get();
-        Notification::send($admins, new NewUserRegisteredNotification($user));
-
-        $userResource = new UserResource($user);
-        broadcast(new NewUserRegistered($userResource))->toOthers();
+        foreach ($admins as $admin) {
+            $notification = new NewUserCreated($user, $admin->id);
+            $admin->notify($notification);
+        }
     }
 
     /**

@@ -56,37 +56,40 @@
     <script src="{{ asset('assets/js/app.js') }}"></script>
 
     @auth
-        <!-- In your Blade file (e.g., resources/views/layouts/app.blade.php) -->
-        <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+        <script src="https://js.pusher.com/8.0/pusher.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.12.1/echo.iife.js"></script>
 
         <script>
-            // تفعيل الديبج فى اللوكال
             Pusher.logToConsole = {{ app()->environment('local') ? 'true' : 'false' }};
-
-            // initialise Pusher
-            var pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
+            const pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
                 cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
+                encrypted: true,
+                authEndpoint: '/broadcasting/auth',
+                auth: {
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                }
             });
 
-            // subscribe to channel
-            @if (auth()->user()->isAdmin())
-                var channel = pusher.subscribe('admins-channel');
+            const channel = pusher.subscribe('private-admin.' + {{ Auth::id() }});
 
-                // listen to event
-                channel.bind('new-user-registered', function (data) {
-                    if (data.user.created_by !== {{ auth()->id() }}) {
-                        // alert("مستخدم جديد سجل: " + data.user.username);
-                        showAndAddNotification(
-                            'fa-user-plus text-primary',
-                            'مستخدم جديد',
-                            data.user.username,
-                            data.user.created_at,
-                            "{{ route('admin.users.show', ':slug') }}".replace(':slug', data.user.slug),
-                            5000
-                        );
-                    }
-                });
-            @endif
+            channel.bind('Illuminate\\Notifications\\Events\\BroadcastNotificationCreated', function (notification) {
+                console.log(notification);
+                pushNotificationToList(
+                    id = notification.id ?? null,
+                    title = notification.title,
+                    content = notification.body,
+                    time = notification.timestamp,
+                    ؤ = notification.model_url
+                        ? (notification.notification_url ?? '#')
+                        : '#',
+                    icon = null,
+                    image = null,
+                    sound = null,
+                    unreadCountFromServer = notification.meta?.unread_count
+                )
+            });
         </script>
     @endauth
 </body>
