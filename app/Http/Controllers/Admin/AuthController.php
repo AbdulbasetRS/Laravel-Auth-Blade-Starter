@@ -424,8 +424,8 @@ class AuthController extends Controller
 
     public function dashboard()
     {
-        $newUser = User::factory()->create(['created_by' => auth()->id()]);
-        $newUser->profile()->create(Profile::factory()->raw());
+        // $newUser = User::factory()->create(['created_by' => auth()->id()]);
+        // $newUser->profile()->create(Profile::factory()->raw());
 
         return view('admin.dashboard');
     }
