@@ -336,3 +336,17 @@ body.theme-dark .offcanvas .nav-link[aria-expanded="true"] {
 [dir="rtl"] .active-menu::before {
     content: " ←" !important;
 }
+
+/* RTL: خلي السهم على الشمال */
+[dir="rtl"] .form-floating .form-select {
+    background-position: left .75rem center !important;
+    padding-left: 2.25rem !important;
+    padding-right: .75rem !important;
+}
+
+/* LTR: خلي السهم على اليمين */
+[dir="ltr"] .form-floating .form-select {
+    background-position: right .75rem center !important;
+    padding-right: 2.25rem !important;
+    padding-left: .75rem !important;
+}
